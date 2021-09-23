@@ -3,7 +3,7 @@ A complete directory and sample heirarchy of reproducable scripts for analysis o
 
 ## Metadata
 doi: <br>
-Author(s): Roshan Lodha<sup>a,b</sup>, Candece Gladson<sup>b</sup>
+Author(s): Roshan Lodha<sup>a,b</sup>, Candece Gladson<sup>b</sup> <br>
 <sup>b</sup>Lerner College of Medicine, Cleveland Clinic, 9501 Euclid Avenue, Cleveland, Ohio 44195
 <sup>b</sup>Lerner Research Institute, Cleveland Clinic, 9500 Euclid Avenue, Cleveland, Ohio 44195
 
