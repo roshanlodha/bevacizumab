@@ -29,6 +29,8 @@ The following heirarchy allows for one-shot analysis starting with post-read map
 ├── cBioPortal
 │   ├── data
 │   │   ├── CHRNA7_survival_cbioportal.txt
+│   │   ├── chrna7_altered.tsv
+│   │   ├── chrna7_unaltered.tsv
 │   ├── plots
 │   │   ├── 
 │   ├── cBioPortal.R
