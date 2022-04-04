@@ -1,5 +1,6 @@
 Molecular Phenotype of Bevacizumab Responders
 ================
+Roshan Lodha
 2022-04-04
 
 ## PCA
@@ -8,33 +9,10 @@ Molecular Phenotype of Bevacizumab Responders
 
 ``` r
 design <- read_tsv("raw/prefilterstudydesign.txt")
-```
-
-    ## Rows: 11 Columns: 2
-    ## ── Column specification ────────────────────────────────────────────────────────
-    ## Delimiter: "\t"
-    ## chr (2): sample, group
-    ## 
-    ## ℹ Use `spec()` to retrieve the full column specification for this data.
-    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-
-``` r
 sampleLabels <- design$sample
 group <- factor(design$group)
 
 gbmexpr <- read_csv("raw/prefiltergbmexpr.csv")[2:13] #pre-filtered
-```
-
-    ## Rows: 18952 Columns: 14
-    ## ── Column specification ────────────────────────────────────────────────────────
-    ## Delimiter: ","
-    ## chr  (3): Ensembl Gene ID, Gene Symbol, Description
-    ## dbl (11): GBM64_poor, GBM76_poor, GBM80_poor, GBM85_poor, GBM108_poor, GBM11...
-    ## 
-    ## ℹ Use `spec()` to retrieve the full column specification for this data.
-    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-
-``` r
 gbmexpr.matrix <- as.matrix(gbmexpr[,-1])
 rownames(gbmexpr.matrix) <- unlist(gbmexpr[,1])
 myDGEList <- DGEList(gbmexpr.matrix)
@@ -78,17 +56,6 @@ ggarrange(pca.plot, den, ncol = 2, nrow = 1)
 
 ``` r
 design <- read_tsv("raw/studydesign.txt")
-```
-
-    ## Rows: 9 Columns: 2
-    ## ── Column specification ────────────────────────────────────────────────────────
-    ## Delimiter: "\t"
-    ## chr (2): sample, group
-    ## 
-    ## ℹ Use `spec()` to retrieve the full column specification for this data.
-    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-
-``` r
 sampleLabels <- design$sample
 group <- factor(design$group)
 mm <- model.matrix(~0 + group)
@@ -102,48 +69,39 @@ counts.matrix <- as.matrix(counts[3:11])
 rownames(counts.matrix) <- counts$gene
 ```
 
-    ## Too few points to calculate an ellipse
-
-    ## Warning: Removed 1 row(s) containing missing values (geom_path).
-
 ![](bev_files/figure-gfm/pca-1.png)<!-- -->
 
 ## DGE
 
 ### Cleaning
 
-    ## converting counts to integer mode
+``` r
+coding_genes <- getBM(attributes = c( "hgnc_symbol"), 
+                      filters = c("biotype"), 
+                      values = list(biotype="protein_coding"), 
+                      mart = mart)$hgnc_symbol
 
-    ## Warning in DESeqDataSet(se, design = design, ignoreRank): some variables in
-    ## design formula are characters, converting to factors
+rownames(counts.matrix) <- counts$geneID
+dds <- DESeqDataSetFromMatrix(countData = round(counts.matrix),
+                              colData = design,
+                              design = ~ group)
 
-    ## estimating size factors
-
-    ## estimating dispersions
-
-    ## gene-wise dispersion estimates
-
-    ## mean-dispersion relationship
-
-    ## final dispersion estimates
-
-    ## fitting model and testing
+keep <- rowSums(counts(dds)) >= 0 #original
+dds <- dds[keep,]
+dds <- DESeq(dds)
+dds <- estimateSizeFactors(dds)
+deseqvoom <- voom(counts(dds, normalized=TRUE), mm, plot = T)
+```
 
 ![](bev_files/figure-gfm/dge-cleaning-1.png)<!-- -->
 
-    ## using pre-existing size factors
-
-    ## estimating dispersions
-
-    ## found already estimated dispersions, replacing these
-
-    ## gene-wise dispersion estimates
-
-    ## mean-dispersion relationship
-
-    ## final dispersion estimates
-
-    ## fitting model and testing
+``` r
+keep <- rowSums(counts(dds)) >= 350 #determined via hyperparameter exploration
+dds <- dds[keep,]
+dds <- DESeq(dds)
+dds <- estimateSizeFactors(dds)
+deseqvoom <- voom(counts(dds, normalized=TRUE), mm, plot = T)
+```
 
 ![](bev_files/figure-gfm/dge-cleaning-2.png)<!-- -->
 
@@ -152,13 +110,6 @@ rownames(counts.matrix) <- counts$gene
 ``` r
 res <- results(dds)
 res <- lfcShrink(dds, coef="group_poor_vs_good", type="ashr")
-```
-
-    ## using 'ashr' for LFC shrinkage. If used in published research, please cite:
-    ##     Stephens, M. (2016) False discovery rates: a new deal. Biostatistics, 18:2.
-    ##     https://doi.org/10.1093/biostatistics/kxw041
-
-``` r
 deseq <- as.data.frame(res) %>% drop_na() %>% arrange(padj) %>% arrange(desc(abs(log2FoldChange)))
 deseq$gene <- getSYMBOL(rownames(deseq), data='org.Hs.eg')
 deseq <- dplyr::filter(deseq, gene %in% coding_genes)
@@ -424,15 +375,6 @@ deseq.gsea <- abs(deseq.GSEA.select$log2FoldChange)/deseq.GSEA.select$log2FoldCh
 names(deseq.gsea) <- as.character(deseq.GSEA.select$gene)
 deseq.gsea <- sort(deseq.gsea, decreasing = TRUE)
 deseq.gsea.res <- GSEA(deseq.gsea, pvalueCutoff = 1, TERM2GENE=hs_gsea_h, verbose=FALSE)
-```
-
-    ## Warning in preparePathwaysAndStats(pathways, stats, minSize, maxSize, gseaParam, : There are ties in the preranked stats (23.18% of the list).
-    ## The order of those tied genes will be arbitrary, which may produce unexpected results.
-
-    ## Warning in fgseaMultilevel(...): For some pathways, in reality P-values are less
-    ## than 1e-10. You can set the `eps` argument to zero for better estimation.
-
-``` r
 deseq.GSEA.df <- as_tibble(deseq.gsea.res@result)
 deseq.GSEA.df <- deseq.GSEA.df %>%
   mutate(phenotype = case_when(
@@ -465,3 +407,5 @@ ggplot(deseq.GSEA.df, aes(x=NES, y=-log10(p.adjust), color=phenotype)) +
 ### EGR1
 
 ### CHRNA7
+
+## Immunohistory Chemistry

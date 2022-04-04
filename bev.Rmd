@@ -1,18 +1,16 @@
 ---
 title: "Molecular Phenotype of Bevacizumab Responders"
-output: github_document
+subtitle: "Tumors that respond poorly to bevacizumab therapy show upregulation of angiogenesis genes in glioblastoma."
+author: "Roshan Lodha"
 date: "`r Sys.Date()`"
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, 
+                      message = FALSE, 
+                      warning = FALSE)
 ```
-
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
 ```{r packages, include = FALSE}
 for (package in c('biomaRt', 'tidyverse', 'tximport', 'ensembldb', 'EnsDb.Hsapiens.v86', 
@@ -121,7 +119,7 @@ ggplot(pca.res.df) +
 
 ## DGE
 ### Cleaning
-``` {r dge-cleaning, echo = FALSE}
+``` {r dge-cleaning}
 coding_genes <- getBM(attributes = c( "hgnc_symbol"), 
                       filters = c("biotype"), 
                       values = list(biotype="protein_coding"), 
