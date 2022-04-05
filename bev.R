@@ -179,6 +179,40 @@ search <- function(x) {
   print(deseq %>% filter(grepl(x, gene)))
 }
 
+## ----collagen-heatmap------------------------------------------------------------------------------
+collagen <- counts %>% 
+            filter(grepl("COL", gene)) %>% 
+            dplyr::select(-geneID)
+rownames(collagen) <- collagen$gene
+collagen <- collagen %>% 
+            dplyr::select(-gene)
+collagen <- as.data.frame(t(collagen))
+collagen$sample <- rownames(collagen)
+rownames(collagen) <- NULL
+collagen$group <- gsub("GBM[0-9]*_", "", collagen$sample)
+collagen <- collagen %>% pivot_longer(cols = -c("sample", "group"),
+                                      names_to = "gene",
+                                      values_to = "expression")
+
+collagen$log.expr <- log(collagen$expression+1)
+collagen$sample <- substr(collagen$sample,
+                          1,
+                          nchar(collagen$sample)-5)
+
+collagen_plot <- ggplot(data = collagen, mapping = aes(x = sample, y = gene, fill = log.expr)) +
+  geom_tile() +
+  scale_fill_gradient(high = "#ffb464", low = "#126079") +
+  scale_colour_prism(palette = "colors") +
+  xlab(label = "Patient Derived Xenograft") + # Add a nicer x-axis title
+  ggtitle("C. Angiogenic Gene RNA Expression") +
+  facet_grid(~ group, switch = "x", scales = "free_x", space = "free_x") + 
+  #labs(color = "Your title here") +
+  theme_prism() +
+  theme(axis.title.y = element_blank(),
+        axis.text.x = element_text(angle = 60, vjust = 0.7),
+        legend.position = "bottom")
+ggsave(filename = "./plots/collagen_plot.png", 
+  plot = collagen_plot, height = 12, width=6)
 
 ## ----KDR, eval = FALSE, echo = FALSE, include = FALSE----------------------------------------------
 ## kdr <- scan("./input/KDR_geneset.txt", character(), quote = "")
@@ -242,9 +276,7 @@ b_v_heatmap <- b_v_heatmap %>% pivot_longer(cols = -c("sample", "group"),
 b_v_heatmap$log.expr <- log(b_v_heatmap$expression+1)
 b_v_heatmap$sample <- substr(b_v_heatmap$sample,1,nchar(b_v_heatmap$sample)-5)
 
-ggplot(data = b_v_heatmap, mapping = aes(x = sample, 
-                                         y = gene,
-                                         fill = log.expr)) +
+b_v_heatmap.plot <- ggplot(data = b_v_heatmap, mapping = aes(x = sample, y = gene, fill = log.expr)) +
   geom_tile() +
   scale_fill_gradient(high = "#ffb464", low = "#126079") +
   scale_colour_prism(palette = "colors") +

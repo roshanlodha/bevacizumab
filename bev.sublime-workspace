@@ -40,6 +40,18 @@
 		"selected_items":
 		[
 			[
+				"git push",
+				"Git: Push"
+			],
+			[
+				"git commit",
+				"Git: Commit"
+			],
+			[
+				"git add",
+				"Git: Add All"
+			],
+			[
 				"in",
 				"Package Control: Install Package"
 			],
@@ -190,6 +202,14 @@
 	"output.git":
 	{
 		"height": 108.0
+	},
+	"output.git-commit":
+	{
+		"height": 126.0
+	},
+	"output.git-push":
+	{
+		"height": 126.0
 	},
 	"pinned_build_system": "",
 	"project": "bev.sublime-project",
