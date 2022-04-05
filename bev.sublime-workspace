@@ -27,18 +27,6 @@
 	},
 	"buffers":
 	[
-		{
-			"file": "bev.R",
-			"settings":
-			{
-				"buffer_size": 13964,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			},
-			"undo_stack":
-			[
-			]
-		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -52,6 +40,18 @@
 		"selected_items":
 		[
 			[
+				"in",
+				"Package Control: Install Package"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"git: push",
+				"Git: Push"
+			],
+			[
 				"Package Control: git",
 				"Package Control: Install Package"
 			]
@@ -60,9 +60,12 @@
 	},
 	"console":
 	{
-		"height": 0.0,
+		"height": 112.0,
 		"history":
 		[
+			"ls",
+			"install.packages",
+			"read_csv()"
 		]
 	},
 	"distraction_free":
@@ -107,7 +110,7 @@
 	],
 	"find":
 	{
-		"height": 24.0
+		"height": 26.0
 	},
 	"find_in_files":
 	{
@@ -142,44 +145,12 @@
 		{
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "bev.R",
-					"selected": true,
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 13964,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1066,
-								1066
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/R/R.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"stack_multiselect": false,
-					"type": "text"
-				}
 			]
 		}
 	],
 	"incremental_find":
 	{
-		"height": 24.0
+		"height": 26.0
 	},
 	"input":
 	{
@@ -216,11 +187,15 @@
 	{
 		"height": 0.0
 	},
+	"output.git":
+	{
+		"height": 108.0
+	},
 	"pinned_build_system": "",
 	"project": "bev.sublime-project",
 	"replace":
 	{
-		"height": 44.0
+		"height": 48.0
 	},
 	"save_all_on_build": true,
 	"select_file":
