@@ -180,8 +180,11 @@ search <- function(x) {
 }
 
 ## ----collagen-heatmap------------------------------------------------------------------------------
-collagen_genes <- deseq %>% 
-                  filter(grepl("COL", gene)) %>% 
+collagen_genes <- deseq
+collagen_genes$temp = substr(collagen_genes$gene, 1, 3)
+collagen_genes <- collagen_genes %>% 
+                  #filter(grepl("COL", gene)) %>% 
+                  filter(temp == "COL") %>% 
                   filter(enrichment != "none")
 collagen_genes <- collagen_genes$gene
 
@@ -218,44 +221,6 @@ collagen_plot <- ggplot(data = collagen, mapping = aes(x = sample, y = gene, fil
         legend.position = "bottom")
 ggsave(filename = "./plots/collagen.png", 
   plot = collagen_plot, height = 6, width=6)
-
-## ----KDR, eval = FALSE, echo = FALSE, include = FALSE----------------------------------------------
-## kdr <- scan("./input/KDR_geneset.txt", character(), quote = "")
-## kdr <- deseq %>% filter((gene %in% kdr)
-##                         & (enrichment!="none")
-##                         & (abs(log2FoldChange) > 4))
-## kdr
-
-
-## ----kdr-heatamp, eval = FALSE, echo = FALSE, include = FALSE--------------------------------------
-## goi <- kdr$gene
-## kdr_heatmap <- counts %>% filter(gene %in% goi) %>% dplyr::select(-geneID)
-## rownames(kdr_heatmap) <- kdr_heatmap$gene
-## kdr_heatmap <- kdr_heatmap %>% dplyr::select(-gene)
-## kdr_heatmap <- as.data.frame(t(kdr_heatmap))
-## kdr_heatmap$sample <- rownames(kdr_heatmap)
-## rownames(kdr_heatmap) <- NULL
-## kdr_heatmap$group <- gsub("GBM[0-9]*_", "", kdr_heatmap$sample)
-## kdr_heatmap <- kdr_heatmap %>% pivot_longer(cols = -c("sample", "group"),
-##                                             names_to = "gene",
-##                                             values_to = "expression")
-## 
-## kdr_heatmap$log.expr <- log(kdr_heatmap$expression+1)
-## kdr_heatmap$sample <- substr(kdr_heatmap$sample,1,nchar(kdr_heatmap$sample)-5)
-## ggplot(data = kdr_heatmap, mapping = aes(x = sample,
-##                                          y = gene,
-##                                          fill = log.expr)) +
-##   geom_tile() +
-##   scale_fill_gradient(high = "#ffb464", low = "#126079") +
-##   scale_colour_prism(palette = "colors") +
-##   xlab(label = "Patient Derived Xenograft") + # Add a nicer x-axis title
-##   ggtitle("B. RNA Expression Heatmap") +
-##   facet_grid(~ group, switch = "x", scales = "free_x", space = "free_x") +
-##   #labs(color = "Your title here") +
-##   theme_prism() +
-##   theme(axis.title.y = element_blank(),
-##         axis.text.x = element_text(angle = 60, vjust = 0.7),
-##         legend.position = "bottom")
 
 
 ## ----blood-vessel----------------------------------------------------------------------------------
