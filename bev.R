@@ -81,6 +81,7 @@ ggexport(sf1, filename = "./plots/supplementalfigure1.png",
 ## ----umap------------------------------------------------------------------------------------------
 
 
+
 ## ----counts----------------------------------------------------------------------------------------
 design <- read_tsv("./input/studydesign.txt")
 sampleLabels <- design$sample
@@ -212,7 +213,7 @@ collagen_plot <- ggplot(data = collagen, mapping = aes(x = sample, y = gene, fil
   scale_fill_gradient(high = "#ffb464", low = "#126079") +
   scale_colour_prism(palette = "colors") +
   xlab(label = "Patient Derived Xenograft") + # Add a nicer x-axis title
-  ggtitle("C. Angiogenic Gene RNA Expression") +
+  ggtitle("Collagen Genes RNA Expression") +
   facet_grid(~ group, switch = "x", scales = "free_x", space = "free_x") + 
   #labs(color = "Your title here") +
   theme_prism() +
