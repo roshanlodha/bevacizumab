@@ -180,8 +180,13 @@ search <- function(x) {
 }
 
 ## ----collagen-heatmap------------------------------------------------------------------------------
+collagen_genes <- deseq %>% 
+                  filter(grepl("COL", gene)) %>% 
+                  filter(enrichment != "none")
+collagen_genes <- collagen_genes$gene
+
 collagen <- counts %>% 
-            filter(grepl("COL", gene)) %>% 
+            filter(gene %in% collagen_genes) %>% 
             dplyr::select(-geneID)
 rownames(collagen) <- collagen$gene
 collagen <- collagen %>% 
@@ -211,8 +216,8 @@ collagen_plot <- ggplot(data = collagen, mapping = aes(x = sample, y = gene, fil
   theme(axis.title.y = element_blank(),
         axis.text.x = element_text(angle = 60, vjust = 0.7),
         legend.position = "bottom")
-ggsave(filename = "./plots/collagen_plot.png", 
-  plot = collagen_plot, height = 12, width=6)
+ggsave(filename = "./plots/collagen.png", 
+  plot = collagen_plot, height = 6, width=6)
 
 ## ----KDR, eval = FALSE, echo = FALSE, include = FALSE----------------------------------------------
 ## kdr <- scan("./input/KDR_geneset.txt", character(), quote = "")
