@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"colla",
+				"collagen_genes"
+			],
+			[
+				"de",
+				"deseq"
+			],
+			[
 				"su",
 				"sup"
 			],
@@ -27,6 +35,164 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "bev.R",
+			"settings":
+			{
+				"buffer_size": 13835,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "roshanlodha@Roshan's Macbook Air bevacizumab-response % git status                                                                                 \nOn branch main\nYour branch is up to date with 'origin/main'.\n\nnothing to commit, working tree clean\nroshanlodha@Roshan's Macbook Air bevacizumab-response % R console                                                                                  \nARGUMENT 'console' __ignored__\n\n\nR version 4.1.1 (2021-08-10) -- \"Kick Things\"\nCopyright (C) 2021 The R Foundation for Statistical Computing\nPlatform: x86_64-apple-darwin17.0 (64-bit)\n\nR is free software and comes with ABSOLUTELY NO WARRANTY.\nYou are welcome to redistribute it under certain conditions.\nType 'license()' or 'licence()' for distribution details.\n\n  Natural language support but running in an English locale\n\nR is a collaborative project with many contributors.\nType 'contributors()' for more information and\n'citation()' on how to cite R or R packages in publications.\n\nType 'demo()' for some demos, 'help()' for on-line help, or\n'help.start()' for an HTML browser interface to help.\nType 'q()' to quit R.\n\nS> q()                                                                                                                                             \nSave workspace image? [y/n/c]: n                                                                                                                   \nroshanlodha@Roshan's Macbook Air bevacizumab-response % Rscript bev.R                                                                              \n── Attaching packages ────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.1 ──\n✔ ggplot2 3.3.5     ✔ purrr   0.3.4                                                                                        \n✔ tibble  3.1.6     ✔ dplyr   1.0.8\n✔ tidyr   1.2.0     ✔ stringr 1.4.0\n✔ readr   2.1.2     ✔ forcats 0.5.1\n── Conflicts ───────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\n✖ dplyr::select() masks biomaRt::select()\n\nAttaching package: ‘BiocGenerics’\n\nThe following objects are masked from ‘package:parallel’:\n\n    clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,\n    clusterExport, clusterMap, parApply, parCapply, parLapply,\n    parLapplyLB, parRapply, parSapply, parSapplyLB\n\nThe following objects are masked from ‘package:dplyr’:\n\n    combine, intersect, setdiff, union\n\nThe following objects are masked from ‘package:stats’:\n\n    IQR, mad, sd, var, xtabs\n\nThe following objects are masked from ‘package:base’:\n\n    anyDuplicated, append, as.data.frame, basename, cbind, colnames,\n    dirname, do.call, duplicated, eval, evalq, Filter, Find, get, grep,\n    grepl, intersect, is.unsorted, lapply, Map, mapply, match, mget,\n    order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,\n    rbind, Reduce, rownames, sapply, setdiff, sort, table, tapply,\n    union, unique, unsplit, which.max, which.min\n\n\nAttaching package: ‘S4Vectors’\n\nThe following objects are masked from ‘package:dplyr’:\n\n    first, rename\n\nThe following object is masked from ‘package:tidyr’:\n\n    expand\n\nThe following objects are masked from ‘package:base’:\n\n    expand.grid, I, unname\n\n\nAttaching package: ‘IRanges’\n\nThe following objects are masked from ‘package:dplyr’:\n\n    collapse, desc, slice\n\nThe following object is masked from ‘package:purrr’:\n\n    reduce\n\nWelcome to Bioconductor\n\n    Vignettes contain introductory material; view with\n    'browseVignettes()'. To cite Bioconductor, see\n    'citation(\"Biobase\")', and for packages 'citation(\"pkgname\")'.\n\n\nAttaching package: ‘AnnotationDbi’\n\nThe following object is masked from ‘package:dplyr’:\n\n    select\n\n\nAttaching package: 'ensembldb'\n\nThe following object is masked from 'package:dplyr':\n\n    filter\n\nThe following object is masked from 'package:stats':\n\n    filter\n\n\nAttaching package: 'limma'\n\nThe following object is masked from 'package:BiocGenerics':\n\n    plotMA\n\n\nAttaching package: 'matrixStats'\n\nThe following objects are masked from 'package:Biobase':\n\n    anyMissing, rowMedians\n\nThe following object is masked from 'package:dplyr':\n\n    count\n\n\nAttaching package: 'MatrixGenerics'\n\nThe following objects are masked from 'package:matrixStats':\n\n    colAlls, colAnyNAs, colAnys, colAvgsPerRowSet, colCollapse,\n    colCounts, colCummaxs, colCummins, colCumprods, colCumsums,\n    colDiffs, colIQRDiffs, colIQRs, colLogSumExps, colMadDiffs,\n    colMads, colMaxs, colMeans2, colMedians, colMins, colOrderStats,\n    colProds, colQuantiles, colRanges, colRanks, colSdDiffs, colSds,\n    colSums2, colTabulates, colVarDiffs, colVars, colWeightedMads,\n    colWeightedMeans, colWeightedMedians, colWeightedSds,\n    colWeightedVars, rowAlls, rowAnyNAs, rowAnys, rowAvgsPerColSet,\n    rowCollapse, rowCounts, rowCummaxs, rowCummins, rowCumprods,\n    rowCumsums, rowDiffs, rowIQRDiffs, rowIQRs, rowLogSumExps,\n    rowMadDiffs, rowMads, rowMaxs, rowMeans2, rowMedians, rowMins,\n    rowOrderStats, rowProds, rowQuantiles, rowRanges, rowRanks,\n    rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs, rowVars,\n    rowWeightedMads, rowWeightedMeans, rowWeightedMedians,\n    rowWeightedSds, rowWeightedVars\n\nThe following object is masked from 'package:Biobase':\n\n    rowMedians\n\n\nAttaching package: 'plotly'\n\nThe following objects are masked from 'package:ensembldb':\n\n    filter, select\n\nThe following object is masked from 'package:AnnotationDbi':\n\n    select\n\nThe following object is masked from 'package:IRanges':\n\n    slice\n\nThe following object is masked from 'package:S4Vectors':\n\n    rename\n\nThe following object is masked from 'package:ggplot2':\n\n    last_plot\n\nThe following object is masked from 'package:biomaRt':\n\n    select\n\nThe following object is masked from 'package:stats':\n\n    filter\n\nThe following object is masked from 'package:graphics':\n\n    layout\n\n\nAttaching package: 'graph'\n\nThe following object is masked from 'package:XML':\n\n    addNode\n\nThe following object is masked from 'package:stringr':\n\n    boundary\n\n\nclusterProfiler v4.0.5  For help: https://yulab-smu.top/biomedical-knowledge-mining-book/\n\nIf you use clusterProfiler in published research, please cite:\nT Wu, E Hu, S Xu, M Chen, P Guo, Z Dai, T Feng, L Zhou, W Tang, L Zhan, X Fu, S Liu, X Bo, and G Yu. clusterProfiler 4.0: A universal enrichment to​‌​\nol for interpreting omics data. The Innovation. 2021, 2(3):100141. doi: 10.1016/j.xinn.2021.100141\n\nAttaching package: 'clusterProfiler'\n\nThe following objects are masked from 'package:ensembldb':\n\n    filter, select\n\nThe following object is masked from 'package:AnnotationDbi':\n\n    select\n\nThe following object is masked from 'package:IRanges':\n\n    slice\n\nThe following object is masked from 'package:S4Vectors':\n\n    rename\n\nThe following object is masked from 'package:purrr':\n\n    simplify\n\nThe following object is masked from 'package:biomaRt':\n\n    select\n\nThe following object is masked from 'package:stats':\n\n    filter\n\n\nAttaching package: 'ggthemes'\n\nThe following object is masked from 'package:cowplot':\n\n    theme_map\n\n\n\nAttaching package: 'gtsummary'\n\nThe following object is masked from 'package:ensembldb':\n\n    select\n\nThe following object is masked from 'package:AnnotationDbi':\n\n    select\n\nThe following object is masked from 'package:biomaRt':\n\n    select\n\n\nAttaching package: 'ggpubr'\n\nThe following object is masked from 'package:enrichplot':\n\n    color_palette\n\nThe following object is masked from 'package:cowplot':\n\n    get_legend\n\nWarning messages:\n1: package ‘tidyr’ was built under R version 4.1.2 \n2: package ‘readr’ was built under R version 4.1.2 \n3: package ‘dplyr’ was built under R version 4.1.2 \n4: package 'DT' was built under R version 4.1.2 \n5: package 'gt' was built under R version 4.1.2 \n6: package 'XML' was built under R version 4.1.2 \n7: package 'gtsummary' was built under R version 4.1.2 \n8: package 'ggdendro' was built under R version 4.1.2 \n9: package 'umap' was built under R version 4.1.2 \nRows: 11 Columns: 2\n── Column specification ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────\nDelimiter: \"\\t\"\nchr (2): sample, group\n\nℹ Use `spec()` to retrieve the full column specification for this data.\nℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.\nRows: 18952 Columns: 14\n── Column specification ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────\nDelimiter: \",\"\nchr  (3): Ensembl Gene ID, Gene Symbol, Description\ndbl (11): GBM64_poor, GBM76_poor, GBM80_poor, GBM85_poor, GBM108_poor, GBM11...\n\nℹ Use `spec()` to retrieve the full column specification for this data.\nℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.\nfile saved to ./plots/supplementalfigure1.png\nRows: 9 Columns: 2\n── Column specification ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────\nDelimiter: \"\\t\"\nchr (2): sample, group\n\nℹ Use `spec()` to retrieve the full column specification for this data.\nℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.\nToo few points to calculate an ellipse\nWarning message:\nRemoved 1 row(s) containing missing values (geom_path). \nconverting counts to integer mode\nWarning message:\nIn DESeqDataSet(se, design = design, ignoreRank) :\n  some variables in design formula are characters, converting to factors\nestimating size factors\nestimating dispersions\ngene-wise dispersion estimates\nmean-dispersion relationship\nfinal dispersion estimates\nfitting model and testing\nusing pre-existing size factors\nestimating dispersions\nfound already estimated dispersions, replacing these\ngene-wise dispersion estimates\nmean-dispersion relationship\nfinal dispersion estimates\nfitting model and testing\nusing 'ashr' for LFC shrinkage. If used in published research, please cite:\n    Stephens, M. (2016) False discovery rates: a new deal. Biostatistics, 18:2.\n    https://doi.org/10.1093/biostatistics/kxw041\nRead 677 items\n# A tibble: 23 × 2\n   gs_cat gs_subcat        \n   <chr>  <chr>            \n 1 C1     \"\"               \n 2 C2     \"CGP\"            \n 3 C2     \"CP\"             \n 4 C2     \"CP:BIOCARTA\"    \n 5 C2     \"CP:KEGG\"        \n 6 C2     \"CP:PID\"         \n 7 C2     \"CP:REACTOME\"    \n 8 C2     \"CP:WIKIPATHWAYS\"\n 9 C3     \"MIR:MIR_Legacy\" \n10 C3     \"MIR:MIRDB\"      \n# … with 13 more rows\nWarning messages:\n1: In preparePathwaysAndStats(pathways, stats, minSize, maxSize, gseaParam,  :\n  There are ties in the preranked stats (23.18% of the list).\nThe order of those tied genes will be arbitrary, which may produce unexpected results.\n2: In fgseaMultilevel(...) :\n  For some pathways, in reality P-values are less than 1e-10. You can set the `eps` argument to zero for better estimation.\nroshanlodha@Roshan's Macbook Air bevacizumab-response % R                                                                                          \n\nR version 4.1.1 (2021-08-10) -- \"Kick Things\"\nCopyright (C) 2021 The R Foundation for Statistical Computing\nPlatform: x86_64-apple-darwin17.0 (64-bit)\n\nR is free software and comes with ABSOLUTELY NO WARRANTY.\nYou are welcome to redistribute it under certain conditions.\nType 'license()' or 'licence()' for distribution details.\n\n  Natural language support but running in an English locale\n\nR is a collaborative project with many contributors.\nType 'contributors()' for more information and\n'citation()' on how to cite R or R packages in publications.\n\nType 'demo()' for some demos, 'help()' for on-line help, or\n'help.start()' for an HTML browser interface to help.\nType 'q()' to quit R.\n\n> citation(\"msigdbr\")\n\nTo cite package ‘msigdbr’ in publications use:\n\n  Igor Dolgalev (2022). msigdbr: MSigDB Gene Sets for Multiple\n  Organisms in a Tidy Data Format. R package version 7.5.1.\n  https://CRAN.R-project.org/package=msigdbr\n\nA BibTeX entry for LaTeX users is\n\n  @Manual{,\n    title = {msigdbr: MSigDB Gene Sets for Multiple Organisms in a Tidy Data Format},\n    author = {Igor Dolgalev},\n    year = {2022},\n    note = {R package version 7.5.1},\n    url = {https://CRAN.R-project.org/package=msigdbr},\n  }\n\n> q()\nSave workspace image? [y/n/c]: n                                                                                                                   \nroshanlodha@Roshan's Macbook Air bevacizumab-response % clear                                                                                      \nroshanlodha@Roshan's Macbook Air bevacizumab-response % git status                                                                                 \nOn branch main    \nYour branch is up to date with 'origin/main'.\n                                                       \nChanges not staged for commit:\n  (use \"git add/rm <file>...\" to update what will be committed)\n  (use \"git restore <file>...\" to discard changes in working directory)\n        deleted:    README.md                                                                                                                      \n        modified:   Rplots.pdf                                                                                                                     \n        deleted:    bev_files/figure-gfm/blood-vessel-heatmap-1.png\n        deleted:    bev_files/figure-gfm/dge-cleaning-1.png\n        deleted:    bev_files/figure-gfm/dge-cleaning-2.png\n        deleted:    bev_files/figure-gfm/dge-plot-1.png\n        deleted:    bev_files/figure-gfm/gsea-1.png\n        deleted:    bev_files/figure-gfm/pca-1.png\n        deleted:    bev_files/figure-gfm/suppfig1-1.png\n        modified:   plots/deseq.png\n        modified:   plots/gsea_hallmark.png\n        modified:   plots/prefilterpca.png\n        modified:   plots/supplementalfigure1.png\n        modified:   tables/gsea_hallmark.csv\n\nno changes added to commit (use \"git add\" and/or \"git commit -a\")\nroshanlodha@Roshan's Macbook Air bevacizumab-response % git status                                                                                 \nOn branch main\nYour branch is up to date with 'origin/main'.\n\nChanges not staged for commit:\n  (use \"git add/rm <file>...\" to update what will be committed)\n  (use \"git restore <file>...\" to discard changes in working directory)\n        modified:   .gitignore\n        deleted:    README.md\n        modified:   Rplots.pdf\n        deleted:    bev_files/figure-gfm/blood-vessel-heatmap-1.png\n        deleted:    bev_files/figure-gfm/dge-cleaning-1.png\n        deleted:    bev_files/figure-gfm/dge-cleaning-2.png\n        deleted:    bev_files/figure-gfm/dge-plot-1.png\n        deleted:    bev_files/figure-gfm/gsea-1.png\n        deleted:    bev_files/figure-gfm/pca-1.png\n        deleted:    bev_files/figure-gfm/suppfig1-1.png\n        modified:   plots/deseq.png\n        modified:   plots/gsea_hallmark.png\n        modified:   plots/prefilterpca.png\n        modified:   plots/supplementalfigure1.png\n        modified:   tables/gsea_hallmark.csv\n\nno changes added to commit (use \"git add\" and/or \"git commit -a\")\nroshanlodha@Roshan's Macbook Air bevacizumab-response % git add .                                                                                  \ng%                                                                                                                                                 ​‌​\nroshanlodha@Roshan's Macbook Air bevacizumab-response % git commit -m \"updated files\"                                                              \n[main 9a2f401] updated files\n 15 files changed, 53 insertions(+), 463 deletions(-)\n delete mode 100644 README.md\n delete mode 100644 bev_files/figure-gfm/blood-vessel-heatmap-1.png\n delete mode 100644 bev_files/figure-gfm/dge-cleaning-1.png\n delete mode 100644 bev_files/figure-gfm/dge-cleaning-2.png\n delete mode 100644 bev_files/figure-gfm/dge-plot-1.png\n delete mode 100644 bev_files/figure-gfm/gsea-1.png\n delete mode 100644 bev_files/figure-gfm/pca-1.png\n delete mode 100644 bev_files/figure-gfm/suppfig1-1.png\n rewrite plots/deseq.png (93%)\n rewrite plots/gsea_hallmark.png (96%)\n rewrite plots/prefilterpca.png (83%)\n rewrite plots/supplementalfigure1.png (96%)\n rewrite tables/gsea_hallmark.csv (66%)\nroshanlodha@Roshan's Macbook Air bevacizumab-response % git push                                                                                   \nEnumerating objects: 21, done.\nCounting objects: 100% (21/21), done.\nDelta compression using up to 4 threads\nCompressing objects: 100% (11/11), done.\nWriting objects: 100% (11/11), 773.00 KiB | 6.28 MiB/s, done.\nTotal 11 (delta 5), reused 0 (delta 0), pack-reused 0\nremote: Resolving deltas: 100% (5/5), completed with 5 local objects.                                                                              \nTo https://github.com/roshanlodha/bevacizumab-response.git\n   555b1cf..9a2f401  main -> main\nroshanlodha@Roshan's Macbook Air bevacizumab-response % git status                                                                                 \nOn branch main\nYour branch is up to date with 'origin/main'.\n\nnothing to commit, working tree clean\nroshanlodha@Roshan's Macbook Air bevacizumab-response % clear                                                                                      \nroshanlodha@Roshan's Macbook Air bevacizumab-response % ",
+			"settings":
+			{
+				"buffer_size": 17542,
+				"line_ending": "Unix",
+				"name": "Login Shell",
+				"scratch": true
+			},
+			"undo_stack":
+			[
+				[
+					331,
+					1,
+					"terminus_render",
+					null,
+					"AwAAAMJCAAAAAAAA+0IAAAAAAAA4AAAAcm9zaGFubG9kaGFAUm9zaGFuJ3MgTWFjYm9vayBBaXIgYmV2YWNpenVtYWItcmVzcG9uc2UgJSD7QgAAAAAAAFVDAAAAAAAAAAAAAPtCAAAAAAAA+0IAAAAAAABaAAAAICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg",
+					"BQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAD6QgAAAAAAAPpCAAAAAAAAAAAAAAAA8L8"
+				],
+				[
+					333,
+					1,
+					"terminus_render",
+					null,
+					"AwAAAMJCAAAAAAAA/EIAAAAAAAA5AAAAcm9zaGFubG9kaGFAUm9zaGFuJ3MgTWFjYm9vayBBaXIgYmV2YWNpenVtYWItcmVzcG9uc2UgJSBn/EIAAAAAAABVQwAAAAAAAAAAAAD8QgAAAAAAAPxCAAAAAAAAWQAAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg",
+					"BQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAD7QgAAAAAAAPtCAAAAAAAAAAAAAAAA8L8"
+				],
+				[
+					335,
+					1,
+					"terminus_render",
+					null,
+					"AwAAAMJCAAAAAAAA/UIAAAAAAAA6AAAAcm9zaGFubG9kaGFAUm9zaGFuJ3MgTWFjYm9vayBBaXIgYmV2YWNpenVtYWItcmVzcG9uc2UgJSBnaf1CAAAAAAAAVUMAAAAAAAAAAAAA/UIAAAAAAAD9QgAAAAAAAFgAAAAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg",
+					"BQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAD8QgAAAAAAAPxCAAAAAAAAAAAAAAAA8L8"
+				],
+				[
+					337,
+					1,
+					"terminus_render",
+					null,
+					"AwAAAMJCAAAAAAAA/UIAAAAAAAA7AAAAcm9zaGFubG9kaGFAUm9zaGFuJ3MgTWFjYm9vayBBaXIgYmV2YWNpenVtYWItcmVzcG9uc2UgJSBnaXT9QgAAAAAAAFVDAAAAAAAAAAAAAP5CAAAAAAAA/kIAAAAAAABXAAAAICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg",
+					"BQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAD9QgAAAAAAAP1CAAAAAAAAAAAAAAAA8L8"
+				],
+				[
+					339,
+					1,
+					"terminus_render",
+					null,
+					"AwAAAMJCAAAAAAAA/0IAAAAAAAA8AAAAcm9zaGFubG9kaGFAUm9zaGFuJ3MgTWFjYm9vayBBaXIgYmV2YWNpenVtYWItcmVzcG9uc2UgJSBnaXQg/0IAAAAAAABVQwAAAAAAAAAAAAD/QgAAAAAAAP9CAAAAAAAAVgAAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg",
+					"BQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAD+QgAAAAAAAP5CAAAAAAAAAAAAAAAA8L8"
+				],
+				[
+					341,
+					1,
+					"terminus_render",
+					null,
+					"AwAAAMJCAAAAAAAAAEMAAAAAAAA9AAAAcm9zaGFubG9kaGFAUm9zaGFuJ3MgTWFjYm9vayBBaXIgYmV2YWNpenVtYWItcmVzcG9uc2UgJSBnaXQgcwBDAAAAAAAAVUMAAAAAAAAAAAAAAEMAAAAAAAAAQwAAAAAAAFUAAAAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg",
+					"BQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAD/QgAAAAAAAP9CAAAAAAAAAAAAAAAA8L8"
+				],
+				[
+					343,
+					1,
+					"terminus_render",
+					null,
+					"AwAAAMJCAAAAAAAAAUMAAAAAAAA+AAAAcm9zaGFubG9kaGFAUm9zaGFuJ3MgTWFjYm9vayBBaXIgYmV2YWNpenVtYWItcmVzcG9uc2UgJSBnaXQgc3QBQwAAAAAAAFVDAAAAAAAAAAAAAAFDAAAAAAAAAUMAAAAAAABUAAAAICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg",
+					"BQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAQwAAAAAAAABDAAAAAAAAAAAAAAAA8L8"
+				],
+				[
+					345,
+					1,
+					"terminus_render",
+					null,
+					"AwAAAMJCAAAAAAAAAkMAAAAAAAA/AAAAcm9zaGFubG9kaGFAUm9zaGFuJ3MgTWFjYm9vayBBaXIgYmV2YWNpenVtYWItcmVzcG9uc2UgJSBnaXQgc3RhAkMAAAAAAABVQwAAAAAAAAAAAAACQwAAAAAAAAJDAAAAAAAAUwAAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg",
+					"BQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAABQwAAAAAAAAFDAAAAAAAAAAAAAAAA8L8"
+				],
+				[
+					347,
+					1,
+					"terminus_render",
+					null,
+					"AwAAAMJCAAAAAAAAA0MAAAAAAABAAAAAcm9zaGFubG9kaGFAUm9zaGFuJ3MgTWFjYm9vayBBaXIgYmV2YWNpenVtYWItcmVzcG9uc2UgJSBnaXQgc3RhdANDAAAAAAAAVUMAAAAAAAAAAAAAA0MAAAAAAAADQwAAAAAAAFIAAAAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg",
+					"BQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAACQwAAAAAAAAJDAAAAAAAAAAAAAAAA8L8"
+				],
+				[
+					349,
+					1,
+					"terminus_render",
+					null,
+					"AwAAAMJCAAAAAAAABEMAAAAAAABBAAAAcm9zaGFubG9kaGFAUm9zaGFuJ3MgTWFjYm9vayBBaXIgYmV2YWNpenVtYWItcmVzcG9uc2UgJSBnaXQgc3RhdHUEQwAAAAAAAFVDAAAAAAAAAAAAAARDAAAAAAAABEMAAAAAAABRAAAAICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg",
+					"BQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAADQwAAAAAAAANDAAAAAAAAAAAAAAAA8L8"
+				],
+				[
+					351,
+					2,
+					"terminus_render",
+					null,
+					"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"
+				],
+				[
+					353,
+					1,
+					"terminus_render",
+					null,
+					"AwAAALpDAAAAAAAA80MAAAAAAAA4AAAAcm9zaGFubG9kaGFAUm9zaGFuJ3MgTWFjYm9vayBBaXIgYmV2YWNpenVtYWItcmVzcG9uc2UgJSDzQwAAAAAAAE1EAAAAAAAAAAAAAPNDAAAAAAAA80MAAAAAAABaAAAAICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg",
+					"BQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAADyQwAAAAAAAPJDAAAAAAAAAAAAAAAA8L8"
+				],
+				[
+					355,
+					1,
+					"terminus_render",
+					null,
+					"AwAAALpDAAAAAAAA9EMAAAAAAAA5AAAAcm9zaGFubG9kaGFAUm9zaGFuJ3MgTWFjYm9vayBBaXIgYmV2YWNpenVtYWItcmVzcG9uc2UgJSBj9EMAAAAAAABNRAAAAAAAAAAAAAD0QwAAAAAAAPRDAAAAAAAAWQAAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg",
+					"BQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAADzQwAAAAAAAPNDAAAAAAAAAAAAAAAA8L8"
+				],
+				[
+					357,
+					1,
+					"terminus_render",
+					null,
+					"AwAAALpDAAAAAAAA9UMAAAAAAAA6AAAAcm9zaGFubG9kaGFAUm9zaGFuJ3MgTWFjYm9vayBBaXIgYmV2YWNpenVtYWItcmVzcG9uc2UgJSBjbPVDAAAAAAAATUQAAAAAAAAAAAAA9UMAAAAAAAD1QwAAAAAAAFgAAAAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg",
+					"BQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAD0QwAAAAAAAPRDAAAAAAAAAAAAAAAA8L8"
+				],
+				[
+					359,
+					1,
+					"terminus_render",
+					null,
+					"AwAAALpDAAAAAAAA9kMAAAAAAAA7AAAAcm9zaGFubG9kaGFAUm9zaGFuJ3MgTWFjYm9vayBBaXIgYmV2YWNpenVtYWItcmVzcG9uc2UgJSBjbGX2QwAAAAAAAE1EAAAAAAAAAAAAAPZDAAAAAAAA9kMAAAAAAABXAAAAICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg",
+					"BQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAD1QwAAAAAAAPVDAAAAAAAAAAAAAAAA8L8"
+				],
+				[
+					361,
+					1,
+					"terminus_render",
+					null,
+					"AwAAALpDAAAAAAAA90MAAAAAAAA8AAAAcm9zaGFubG9kaGFAUm9zaGFuJ3MgTWFjYm9vayBBaXIgYmV2YWNpenVtYWItcmVzcG9uc2UgJSBjbGVh90MAAAAAAABNRAAAAAAAAAAAAAD3QwAAAAAAAPdDAAAAAAAAVgAAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg",
+					"BQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAD2QwAAAAAAAPZDAAAAAAAAAAAAAAAA8L8"
+				],
+				[
+					363,
+					1,
+					"terminus_render",
+					null,
+					"MwAAALpDAAAAAAAA90MAAAAAAAA9AAAAcm9zaGFubG9kaGFAUm9zaGFuJ3MgTWFjYm9vayBBaXIgYmV2YWNpenVtYWItcmVzcG9uc2UgJSBjbGVhcvdDAAAAAAAATUQAAAAAAAAAAAAAlEMAAAAAAAC5QwAAAAAAACUAAABub3RoaW5nIHRvIGNvbW1pdCwgd29ya2luZyB0cmVlIGNsZWFuk0MAAAAAAACTQwAAAAAAAAAAAABlQwAAAAAAAJJDAAAAAAAALQAAAFlvdXIgYnJhbmNoIGlzIHVwIHRvIGRhdGUgd2l0aCAnb3JpZ2luL21haW4nLlZDAAAAAAAAZEMAAAAAAAAOAAAAT24gYnJhbmNoIG1haW7CQgAAAAAAAARDAAAAAAAAkwAAAHJvc2hhbmxvZGhhQFJvc2hhbidzIE1hY2Jvb2sgQWlyIGJldmFjaXp1bWFiLXJlc3BvbnNlICUgZ2l0IHN0YXR1cyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIARDAAAAAAAAVUMAAAAAAAAAAAAAoEIAAAAAAADBQgAAAAAAACEAAAAgICA1NTViMWNmLi45YTJmNDAxICBtYWluIC0+IG1haW5lQgAAAAAAAJ9CAAAAAAAAOgAAAFRvIGh0dHBzOi8vZ2l0aHViLmNvbS9yb3NoYW5sb2RoYS9iZXZhY2l6dW1hYi1yZXNwb25zZS5naXTRQQAAAAAAABZCAAAAAAAAkwAAAHJlbW90ZTogUmVzb2x2aW5nIGRlbHRhczogMTAwJSAoNS81KSwgY29tcGxldGVkIHdpdGggNSBsb2NhbCBvYmplY3RzLiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIBZCAAAAAAAAZEIAAAAAAAAAAAAAm0EAAAAAAADQQQAAAAAAADUAAABUb3RhbCAxMSAoZGVsdGEgNSksIHJldXNlZCAwIChkZWx0YSAwKSwgcGFjay1yZXVzZWQgME1EAAAAAAAATkQAAAAAAAAAAAAATkQAAAAAAACFRAAAAAAAAAAAAACFRAAAAAAAAOFEAAAAAAAAAAAAAOFEAAAAAAAA4kQAAAAAAAAAAAAA4kQAAAAAAADiRAAAAAAAAAAAAADiRAAAAAAAABxFAAAAAAAAAAAAABxFAAAAAAAAHUUAAAAAAAAAAAAAHUUAAAAAAAAdRQAAAAAAAAAAAAAdRQAAAAAAAD5FAAAAAAAAAAAAAD5FAAAAAAAAP0UAAAAAAAAAAAAAP0UAAAAAAAA/RQAAAAAAAAAAAAA/RQAAAAAAANJFAAAAAAAAAAAAANJFAAAAAAAA00UAAAAAAAAAAAAA00UAAAAAAADTRQAAAAAAAAAAAADTRQAAAAAAAOFFAAAAAAAAAAAAAOFFAAAAAAAA4kUAAAAAAAAAAAAA4kUAAAAAAADiRQAAAAAAAAAAAADiRQAAAAAAAA9GAAAAAAAAAAAAAA9GAAAAAAAAEEYAAAAAAAAAAAAAEEYAAAAAAAAQRgAAAAAAAAAAAAAQRgAAAAAAABFGAAAAAAAAAAAAABFGAAAAAAAAEUYAAAAAAAAAAAAAEUYAAAAAAAA2RgAAAAAAAAAAAAA2RgAAAAAAADdGAAAAAAAAAAAAADdGAAAAAAAAN0YAAAAAAAAAAAAAN0YAAAAAAADKRgAAAAAAAAAAAADKRgAAAAAAAMtGAAAAAAAAAAAAAMtGAAAAAAAAy0YAAAAAAAAAAAAAykYAAAAAAADKRgAAAAAAAAEAAAAKNkYAAAAAAAA2RgAAAAAAAJQAAAAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgEEYAAAAAAAAQRgAAAAAAACYAAAAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA9GAAAAAAAAD0YAAAAAAAABAAAACuFFAAAAAAAA4UUAAAAAAAAuAAAACiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgINJFAAAAAAAA0kUAAAAAAAAPAAAACiAgICAgICAgICAgICAgPkUAAAAAAAA+RQAAAAAAAJQAAAAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgHEUAAAAAAAAcRQAAAAAAACIAAAAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg4UQAAAAAAADhRAAAAAAAADsAAAAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIIZEAAAAAAAAhkQAAAAAAABbAAAAICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA",
+					"BQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAD3QwAAAAAAAPdDAAAAAAAAAAAAAAAA8L8"
+				]
+			]
+		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -39,6 +205,34 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"terminus",
+				"Terminus: Open Default Shell in Tab (View)"
+			],
+			[
+				"termin",
+				"Terminus: Open Default Shell in Panel"
+			],
+			[
+				"open file",
+				"File: Open this file with an external application"
+			],
+			[
+				"install p",
+				"Package Control: Install Package"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"ter",
+				"Terminal: Open"
+			],
+			[
+				"terminal",
+				"Terminal: Open"
+			],
 			[
 				"git push",
 				"Git: Push"
@@ -72,9 +266,15 @@
 	},
 	"console":
 	{
-		"height": 112.0,
+		"height": 161.0,
 		"history":
 		[
+			"dplyr()",
+			"dplyr",
+			"dplyr::",
+			"git",
+			"1+1",
+			"1=1",
 			"ls",
 			"install.packages",
 			"read_csv()"
@@ -91,10 +291,13 @@
 	},
 	"expanded_folders":
 	[
-		"/Users/roshanlodha/Documents/bevacizumab-response"
+		"/Users/roshanlodha/Documents/bevacizumab-response",
+		"/Users/roshanlodha/Documents/bevacizumab-response/plots",
+		"/Users/roshanlodha/Documents/bevacizumab-response/tables"
 	],
 	"file_history":
 	[
+		"/Users/roshanlodha/Documents/bevacizumab-response/.gitignore",
 		"/Users/roshanlodha/Documents/bevacizumab-response/bev.R",
 		"/Users/roshanlodha/Documents/bevacizumab-response/raw/bev_analysis.R",
 		"/Users/roshanlodha/Downloads/temp",
@@ -126,7 +329,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 0.0,
+		"height": 158.0,
 		"where_history":
 		[
 		]
@@ -136,6 +339,10 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"  ",
+			"{r",
+			"## ----",
+			"%in%"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -157,6 +364,221 @@
 		{
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "bev.R",
+					"selected": true,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 13835,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1068,
+								1068
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										1067,
+										1068
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										936,
+										937
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content"
+							],
+							"syntax": "Packages/R/R.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"stack_multiselect": false,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"sheets":
+			[
+				{
+					"buffer": 1,
+					"selected": true,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 17542,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								17542,
+								17542
+							]
+						],
+						"settings":
+						{
+							"__vi_external_disable": true,
+							"auto_complete": false,
+							"auto_complete_commit_on_tab": false,
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone_locations":
+							{
+							},
+							"bracket_highlighter.ignore": true,
+							"color_scheme": "Terminus.hidden-color-scheme",
+							"draw_centered": false,
+							"draw_indent_guides": false,
+							"draw_unicode_white_space": false,
+							"draw_white_space": "none",
+							"gutter": false,
+							"highlight_line": false,
+							"is_widget": true,
+							"result_base_dir": "/Users/roshanlodha/Documents/bevacizumab-response",
+							"result_file_regex": null,
+							"result_line_regex": null,
+							"rulers":
+							[
+								500
+							],
+							"scroll_past_end": true,
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"terminus.highlight_counter": 289,
+							"terminus_view": true,
+							"terminus_view.args":
+							{
+								"auto_close": true,
+								"cancellable": false,
+								"cmd":
+								[
+									"/bin/zsh",
+									"-i",
+									"-l"
+								],
+								"cwd": "/Users/roshanlodha/Documents/bevacizumab-response",
+								"default_title": "Login Shell",
+								"env":
+								{
+									"LANG": "en_US.UTF-8",
+									"TERM": "linux",
+									"TERMINUS_SUBLIME": "1",
+									"TERM_PROGRAM": "Terminus-Sublime"
+								},
+								"file_regex": null,
+								"line_regex": null,
+								"panel_name": null,
+								"tag": null,
+								"timeit": false,
+								"title": null
+							},
+							"terminus_view.cancellable": false,
+							"terminus_view.key.ctrl+k": true,
+							"terminus_view.key.ctrl+p": true,
+							"terminus_view.natural_keyboard": true,
+							"terminus_view.panel_name": null,
+							"terminus_view.tag": null,
+							"terminus_view.viewport_y": 7110.0,
+							"word_wrap": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 7093.5,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"stack_multiselect": false,
+					"type": "text"
+				}
 			]
 		}
 	],
@@ -177,6 +599,12 @@
 				0,
 				1,
 				1
+			],
+			[
+				0,
+				1,
+				1,
+				2
 			]
 		],
 		"cols":
@@ -187,10 +615,27 @@
 		"rows":
 		[
 			0.0,
+			0.749486759478,
 			1.0
 		]
 	},
 	"menu_visible": true,
+	"output.Terminus":
+	{
+		"height": 46.0
+	},
+	"output.Terminus 2":
+	{
+		"height": 126.0
+	},
+	"output.Terminus 3":
+	{
+		"height": 126.0
+	},
+	"output.Terminus 4":
+	{
+		"height": 46.0
+	},
 	"output.exec":
 	{
 		"height": 203.0
@@ -250,7 +695,7 @@
 	{
 	},
 	"show_minimap": true,
-	"show_open_files": true,
+	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
 	"side_bar_width": 242.0,
