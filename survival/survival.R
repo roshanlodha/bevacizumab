@@ -1,10 +1,7 @@
 #packages and data----
-suppressMessages(library(UCSCXenaTools))
-suppressMessages(library(dplyr))
-suppressMessages(library(survival))
-suppressMessages(library(survminer))
-suppressMessages(library(ggbreak))
-suppressMessages(library(ggprism))
+pkgs <- c("UCSCXenaTools", "dplyr", "survival", "survminer", "ggbreak", "ggprism", "svglite")
+#BiocManager::install(pkgs)
+invisible(lapply(pkgs, function(x) suppressMessages(library(x, character.only = T))))
 
 gbm_cohort = XenaData %>%
   filter(XenaHostNames == "tcgaHub") %>%
@@ -81,9 +78,7 @@ EGR1_plot <- ggsurvplot(fit_EGR1,
                         legend = c(0.7,0.8),
                         title = "EGR1-expression Stratisfied Survival Plot")
 EGR1_plot
-#ggsave("./survival/plots/EGR1survival.png", 
-#       plot = print(EGR1_plot), 
-#       height = 6, width = 6)
+ggsave("./plots/EGR1survival.svg", plot = print(EGR1_plot), height = 6, width = 6)
 
 #RAMP3----
 merged_RAMP3 = tibble(sample = names(RAMP3),
@@ -191,8 +186,7 @@ EGR1_CHRNA7_corr <- ggplot(data = EGR1_CHRNA7, aes(x = z.x, y = z.y)) +
   xlab("EGR1 expression") + 
   ylab("CHRNA7 expression") +
   geom_smooth(method = "lm")
-ggsave("./survival/plots/EGR1.CHRNA7.corr.svg", plot = EGR1_CHRNA7_corr,
-       height = 6, width = 6)
+ggsave("./plots/EGR1.CHRNA7.corr.svg", plot = EGR1_CHRNA7_corr, height = 6, width = 6)
 
 fit_EGR1_CHRNA7 = survfit(Surv(time, status) ~ group, 
                           data = EGR1_CHRNA7 %>% dplyr::filter(group != "Low"))
@@ -229,8 +223,7 @@ EGR1_RAMP3_corr <- ggplot(data = EGR1_RAMP3, aes(x = z.x, y = z.y)) +
   xlab("EGR1 expression") + 
   ylab("CHRNA7 expression") +
   geom_smooth(method = "lm")
-ggsave("./survival/plots/EGR1.RAMP3.corr.svg", plot = EGR1_RAMP3_corr,
-       height = 6, width = 6)
+ggsave("./plots/EGR1.RAMP3.corr.svg", plot = EGR1_RAMP3_corr, height = 6, width = 6)
 
 fit_EGR1_RAMP3 = survfit(Surv(time, status) ~ group, 
                          data = EGR1_RAMP3 %>% dplyr::filter(group != "Low"))

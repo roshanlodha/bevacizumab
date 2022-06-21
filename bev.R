@@ -1,28 +1,27 @@
-## ----setup, include=FALSE--------------------------------------------------------------------------
-knitr::opts_chunk$set(echo = TRUE, 
-                      message = FALSE, 
-                      warning = FALSE)
-
-
 ## ----packages, include = FALSE---------------------------------------------------------------------
-for (package in c('biomaRt', 'tidyverse', 'tximport', 'ensembldb', 'EnsDb.Hsapiens.v86', 
-                  'edgeR', 'matrixStats', 'cowplot', 'DESeq2', 'apeglm', 
-                  'DT', 'plotly', 'gt',
-                  'limma', 'ggrepel',
-                  'GSEABase', 'Biobase', 'GSVA', 'gprofiler2', 
-                  'clusterProfiler', 'msigdbr', 'enrichplot',
+for (package in c('BiocManager', 'tidyverse',
+                  'matrixStats', 'cowplot',
+                  'DT', 'plotly', 'gt', 'ggrepel', 'gprofiler2', 
                   'ggthemes', 'ggprism',
-                  'org.Hs.eg.db', 'annotate',
-                  'clusterProfiler', 'enrichplot',
                   'gtsummary', 'ggforce', 'ggdendro',
                   'ggpubr',
-                  'umap')) {
-  if (!require(package, character.only=T, quietly=T)) {
-    install.packages(package)
-    library(package, character.only=T)
+                  'umap',
+                  'ashr')) {
+  if (!require(package, character.only = T, quietly = T)) {
+    install.packages(package,
+      repos = "http://cran.us.r-project.org")
+    library(package, character.only = T)
   }
 }
 
+bio_pkgs <- c("biomaRt", "tximport", 
+  "ensembldb", "EnsDb.Hsapiens.v86", 
+  "edgeR", "DESeq2", "limma", "apeglm",
+  "GSEABase", "Biobase", "GSVA", 
+  "clusterProfiler", "msigdbr", "enrichplot",
+  "annotate", "org.Hs.eg.db")
+#BiocManager::install(bio_pkgs)
+invisible(lapply(bio_pkgs, function(x) library(x, character.only = T)))
 
 ## ----tools, echo = FALSE---------------------------------------------------------------------------
 mart <- useMart("ENSEMBL_MART_ENSEMBL") #coding genes for cleaning
@@ -181,12 +180,14 @@ search <- function(x) {
 }
 
 ## ----collagen-heatmap------------------------------------------------------------------------------
-collagen_genes <- deseq
-collagen_genes$temp = substr(collagen_genes$gene, 1, 3)
-collagen_genes <- collagen_genes %>% 
+collagen_genes <- c("COL1A1", "COL1A2", "COL2A1", "COL3A1", "COL4A1", "COL4A2", "COL4A3", "COL4A4", "COL4A5", "COL4A6", "COL5A1", "COL5A2", "COL5A3", "COL6A1", "COL6A2", "COL6A3", "COL6A4P1", "COL6A4P2", "COL6A5", "COL6A6", "COL7A1", "COL8A1", "COL8A2", "COL9A1", "COL9A2", "COL9A3", "COL10A1", "COL11A1", "COL11A2", "COL12A1", "COL13A1", "COL14A1", "COL15A1", "COL16A1", "COL17A1", "COL18A1", "COL19A1", "COL20A1", "COL21A1", "COL22A1", "COL23A1", "COL24A1", "COL25A1", "COL26A1", "COL27A1", "COL28A1")
+
+collagen_genes <- deseq %>% filter(gene %in% collagen_genes) %>% filter(enrichment != "none")
+#collagen_genes$temp = substr(collagen_genes$gene, 1, 3)
+#collagen_genes <- collagen_genes %>% 
                   #filter(grepl("COL", gene)) %>% 
-                  filter(temp == "COL") %>% 
-                  filter(enrichment != "none")
+                  #filter(gene %in% collagen_genes) %>% 
+                  #filter(enrichment != "none")
 collagen_genes <- collagen_genes$gene
 
 collagen <- counts %>% 
