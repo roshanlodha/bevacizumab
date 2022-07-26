@@ -1,12 +1,5 @@
 # packages
-for (package in c('BiocManager', 'tidyverse',
-    'matrixStats', 'cowplot',
-    'DT', 'plotly', 'gt', 'ggrepel', 'gprofiler2',
-    'ggthemes', 'ggprism',
-    'gtsummary', 'ggforce', 'ggdendro',
-    'ggpubr',
-    'umap',
-    'ashr')) {
+for (package in c('BiocManager', 'tidyverse', 'matrixStats', 'cowplot', 'DT', 'plotly', 'gt', 'ggrepel', 'gprofiler2', 'ggthemes', 'ggprism', 'gtsummary', 'ggforce', 'ggdendro', 'ggpubr', 'umap', 'ashr')) {
   if (!require(package, character.only = T, quietly = T)) {
     install.packages(package,
       repos = "http://cran.us.r-project.org")
@@ -14,12 +7,7 @@ for (package in c('BiocManager', 'tidyverse',
   }
 }
 
-bio_pkgs <- c("biomaRt", "tximport",
-  "ensembldb", "EnsDb.Hsapiens.v86",
-  "edgeR", "DESeq2", "limma", "apeglm",
-  "GSEABase", "Biobase", "GSVA",
-  "clusterProfiler", "msigdbr", "enrichplot",
-  "annotate", "org.Hs.eg.db")
+bio_pkgs <- c("biomaRt", "tximport", "ensembldb", "EnsDb.Hsapiens.v86", "edgeR", "DESeq2", "limma", "apeglm", "GSEABase", "Biobase", "GSVA", "clusterProfiler", "msigdbr", "enrichplot", "annotate", "org.Hs.eg.db")
 #BiocManager::install(bio_pkgs)
 invisible(lapply(bio_pkgs, function (x) library(x, character.only = T)))
 
@@ -71,8 +59,7 @@ ggsave(path = "./plots/", filename = "prefilterpca.png",
   plot = pca.plot, height = 5, width = 7)
 
 sf1 <- ggarrange(pca.plot, den, ncol = 2, nrow = 1)
-ggexport(sf1, filename = "./plots/supplementalfigure1.png",
-  width = 1000, height = 500)
+ggexport(sf1, filename = "./plots/supplementalfigure1.png", width = 1000, height = 500)
 
 # umap
 
@@ -105,7 +92,7 @@ pca.plot <- ggplot(pca.res.df) +
   ylab(paste0("PC2 (", pc.per[2], "%", ")")) +
   labs(title = "GBM PCA plot") +
   # caption = paste0("produced on ", Sys.time())) +
-stat_ellipse() +
+  stat_ellipse() +
   theme_prism()
 ggsave(path = "./plots/", filename = "postfilterpca.png",
   plot = pca.plot, height = 5, width = 7)
@@ -160,13 +147,13 @@ dgeplot <- ggplot(deseq) +
   geom_text(aes(-8, -log10(0.05), label = "p = 0.05", vjust = 1), colour = "black") +
   labs(title = "A. Differential RNA Expression") +
   #subtitle = "Positive logFC indicates upregulation in poor Bevacizumab responders") +
-xlab("Fold Change (log2)") +
+  xlab("Fold Change (log2)") +
   ylab("Significance (log10)") +
   theme_prism() +
   theme(legend.position = c(0.15, 0.8))
 ggsave(filename = "./plots/deseq.png", plot = dgeplot, height = 6, width = 6)
 
-# quer
+# query
 search <- function (x) {
   print(deseq %>% filter(grepl(x, gene)))
 }
@@ -265,7 +252,7 @@ deseq.GSEA.select <- dplyr::select(deseq, gene, log2FoldChange, padj)
 deseq.gsea <- abs(deseq.GSEA.select$log2FoldChange) / deseq.GSEA.select$log2FoldChange * -log10(deseq.GSEA.select$padj)
 names(deseq.gsea) <- as.character(deseq.GSEA.select$gene)
 deseq.gsea <- sort(deseq.gsea, decreasing = TRUE)
-deseq.gsea.res <- GSEA(deseq.gsea, pvalueCutoff = 1, TERM2GENE = hs_gsea_h, verbose = FALSE)
+deseq.gsea.res <- GSEA(deseq.gsea, pvalueCutoff = 1, TERM2GENE = hs_gsea_kegg, verbose = FALSE)
 deseq.GSEA.df <- as_tibble(deseq.gsea.res @result)
 deseq.GSEA.df <- deseq.GSEA.df %>%
   mutate(phenotype = case_when(
@@ -273,21 +260,21 @@ deseq.GSEA.df <- deseq.GSEA.df %>%
     (NES < 0) & (p.adjust < 0.05) ~"good"))
 deseq.GSEA.df$phenotype[is.na(deseq.GSEA.df$phenotype)] <- "none"
 deseq.GSEA.df$Description <- gsub("_", " ", deseq.GSEA.df$Description)
-write_csv(deseq.GSEA.df, "./tables/gsea_hallmark.csv")
+write_csv(deseq.GSEA.df, "./tables/gsea_kegg.csv")
 
 # gsea
-hallmark_gsea <- ggplot(deseq.GSEA.df, aes(x = NES, y = -log10(p.adjust), color = phenotype)) +
+kegg_gsea <- ggplot(deseq.GSEA.df, aes(x = NES, y = -log10(p.adjust), color = phenotype)) +
   geom_point(aes(size = setSize), alpha = 0.5) +
   scale_color_manual(values = c("good" = "#126079", "none" = "grey", "poor" = "#ffb464")) +
   geom_text(aes(-1.5, -log10(0.05), label = "p = 0.05", vjust = -1)) +
   geom_hline(yintercept = -log10(0.05), linetype = "longdash", size = .5) +
   geom_text_repel(size = 4, data = (deseq.GSEA.df %>% dplyr::filter((NES > 0) & (p.adjust < 0.05)))[1, ],
     aes(label = Description)) +
-  labs(title = "B. Hallmark Gene Set Enrichment") +
+  labs(title = "B. KEGG Gene Set Enrichment") +
   # subtitle = "Positive NES indicates upregulation of gene set in poor Bevacizumab responders") +
-ylab("Significance (log10)") +
+  ylab("Significance (log10)") +
   xlab("Normalized Enrichment Score") +
   theme_prism() +
   theme(legend.position = "bottom")
-ggsave(path = "./plots/", filename = "gsea_hallmark.png", plot = hallmark_gsea,
+ggsave(path = "./plots/", filename = "gsea_kegg.png", plot = kegg_gsea,
   width = 6, height = 6)

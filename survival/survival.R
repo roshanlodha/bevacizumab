@@ -5,24 +5,34 @@ invisible(lapply(pkgs, function (x) suppressMessages(library(x, character.only =
 
 gbm_cohort = XenaData %>%
   filter(XenaHostNames == "tcgaHub") %>%
-  XenaScan("TCGA Glioblastoma")
+  XenaScan("TCGA Glioblastoma") # microarray dataset, CNVA dataset DNA level
 
 #download clinical data-- --
 cli_query = gbm_cohort %>%
   filter(DataSubtype == "phenotype") %>% # select clinical dataset
-XenaGenerate() %>% # generate a XenaHub object
-XenaQuery() %>%
+  XenaGenerate() %>% # generate a XenaHub object
+  XenaQuery() %>%
   XenaDownload()
 cli = XenaPrepare(cli_query)
-head(cli)
 
 # download gene expression data
 ge = gbm_cohort %>%
   filter(DataSubtype == "gene expression RNAseq", Label == "IlluminaHiSeq")
+
+ge = gbm_cohort %>%
+  filter(DataSubtype == "protein expression RPPA", Label == "RPPA (replicate-base normalization)")
 #try AFFYmetrix
 EGR1 = fetch_dense_values(host = ge$XenaHosts,
   dataset = ge$XenaDatasets,
   identifiers = "EGR1",
+  use_probeMap = TRUE) %>% .[1, ]
+EGR3 = fetch_dense_values(host = ge$XenaHosts,
+  dataset = ge$XenaDatasets,
+  identifiers = "EGR3",
+  use_probeMap = TRUE) %>% .[1, ]
+SOX10 = fetch_dense_values(host = ge$XenaHosts,
+  dataset = ge$XenaDatasets,
+  #identifiers = "SOX10",
   use_probeMap = TRUE) %>% .[1, ]
 RAMP3 = fetch_dense_values(host = ge$XenaHosts,
   dataset = ge$XenaDatasets,
@@ -33,12 +43,107 @@ CHRNA7 = fetch_dense_values(host = ge$XenaHosts,
   identifiers = "CHRNA7",
   use_probeMap = TRUE) %>% .[1, ]
 
+#SOX10-- --
+merged_SOX10 = tibble(sample = names(SOX10),
+    SOX10_expression = as.numeric(SOX10)) %>%
+  left_join(cli$GBM_survival.txt, by = "sample") %>%
+  select(sample, SOX10_expression, OS.time, OS) %>%
+  rename(time = OS.time,
+    status = OS)
+ggplot(merged_SOX10, aes(x = SOX10_expression)) +
+  geom_histogram(color="black", fill="white") +
+  theme_prism()
+
+fit_SOX10 = coxph(Surv(time, status) ~ SOX10_expression, data = merged_SOX10)
+fit_SOX10
+
+merged_SOX10 = merged_SOX10 %>%
+  mutate(group = case_when(
+    SOX10_expression > quantile(SOX10_expression, 0.9) ~'High',
+    (SOX10_expression < quantile(SOX10_expression, 0.9) &
+      SOX10_expression > quantile(SOX10_expression, 0.1)) ~'Normal',
+    SOX10_expression < quantile(SOX10_expression, 0.1) ~'Low',
+    TRUE~NA_character_
+  )) %>%
+  mutate(z = (SOX10_expression - mean(SOX10_expression)) / sd(SOX10_expression)) %>%
+  mutate(group = case_when(
+    z > 1.5~'High',
+    z < -1.5~'Low',
+    (z < 1.5) & (z > -1.5) ~'Normal',
+    TRUE~NA_character_
+  ))
+fit_SOX10 = survfit(Surv(time, status) ~group,
+  data = merged_SOX10 %>% dplyr::filter(group != "Low"))
+SOX10_plot <- ggsurvplot(fit_SOX10,
+  pval = TRUE,
+  pval.coord = c(600, 0.5),
+  #xlim = c(0, 1000),
+  palette = c("#ffb464", "#126079"),
+  #conf.int = TRUE,
+  #pval = TRUE,
+  risk.table = TRUE,
+  risk.table.col = "strata",
+  legend.labs = c("High Expression", "Normal Expression"),
+  surv.median.line = "hv",
+  break.time.by = 250,
+    ggtheme = theme_prism(),
+    legend = c(0.7, 0.8),
+    title = "SOX10-expression Stratisfied Survival Plot")
+ggsave("../plots/survival/SOX10survival.png", plot = print(SOX10_plot), height = 6, width = 6)
+
+#EGR3-- --
+merged_EGR3 = tibble(sample = names(EGR3),
+    EGR3_expression = as.numeric(EGR3)) %>%
+  left_join(cli$GBM_survival.txt, by = "sample") %>%
+  #filter(sample_type == "Primary Tumor") %>% # Keep only 'Primary Tumor'
+  select(sample, EGR3_expression, OS.time, OS) %>%
+  rename(time = OS.time,
+    status = OS)
+
+fit_EGR3 = coxph(Surv(time, status) ~EGR3_expression, data = merged_EGR3)
+fit_EGR3
+
+merged_EGR3 = merged_EGR3 %>%
+  mutate(group = case_when(
+    EGR3_expression > quantile(EGR3_expression, 0.9) ~'High',
+    (EGR3_expression < quantile(EGR3_expression, 0.9) &
+      EGR3_expression > quantile(EGR3_expression, 0.1)) ~'Normal',
+    EGR3_expression < quantile(EGR3_expression, 0.1) ~'Low',
+    TRUE~NA_character_
+  )) %>%
+  mutate(z = (EGR3_expression - mean(EGR3_expression)) / sd(EGR3_expression)) %>%
+  mutate(group = case_when(
+    z > 1.5~'High',
+    z < -1.5~'Low',
+    (z < 1.5) & (z > -1.5) ~'Normal',
+    TRUE~NA_character_
+  ))
+fit_EGR3 = survfit(Surv(time, status) ~group,
+  data = merged_EGR3 %>% dplyr::filter(group != "Low"))
+EGR3_plot <- ggsurvplot(fit_EGR3,
+  pval = TRUE,
+  pval.coord = c(600, 0.5),
+  #xlim = c(0, 1000),
+  palette = c("#ffb464", "#126079"),
+  #conf.int = TRUE,
+  #pval = TRUE,
+  risk.table = TRUE,
+  risk.table.col = "strata",
+  legend.labs = c("High Expression", "Normal Expression"),
+  surv.median.line = "hv",
+  break.time.by = 250,
+    ggtheme = theme_prism(),
+    legend = c(0.7, 0.8),
+    title = "EGR3-expression Stratisfied Survival Plot")
+ggsave("../plots/survival/EGR3survival.png", plot = print(EGR3_plot), height = 6, width = 6)
+
+
 #merge-- --
 merged_EGR1 = tibble(sample = names(EGR1),
     EGR1_expression = as.numeric(EGR1)) %>%
   left_join(cli$GBM_survival.txt, by = "sample") %>%
   #filter(sample_type == "Primary Tumor") %>% # Keep only 'Primary Tumor'
-select(sample, EGR1_expression, OS.time, OS) %>%
+  select(sample, EGR1_expression, OS.time, OS) %>%
   rename(time = OS.time,
     status = OS)
 
@@ -169,6 +274,41 @@ CHRNA7_plot <- ggsurvplot(fit_CHRNA7,
     ggtheme = theme_prism(),
     legend = c(0.7, 0.8),
     title = "CHRNA7-expression Stratisfied Survival Plot")
+
+# EGR1 and SOX10
+EGR1_SOX10 <- merge(merged_EGR1, merged_SOX10, by = c("sample", "time", "status")) %>%
+  select("sample", "time", "status", "z.x", "z.y") %>%
+  mutate(group = case_when(
+    (z.x > 1) & (z.y > 1) ~'High',
+    (z.x < -1) & (z.y < -1) ~'Low',
+    TRUE~'Normal'
+  ))
+EGR1_SOX10_corr <- ggplot(data = EGR1_SOX10, aes(x = z.x, y = z.y)) +
+  geom_point() +
+  theme_prism() +
+  labs(title = "EGR1 and SOX10 expression correlation") +
+  xlab("EGR1 expression") +
+  ylab("SOX10 expression") +
+  geom_smooth(method = "lm")
+ggsave("../plots/survival/EGR1.SOX10.corr.svg", plot = EGR1_SOX10_corr, height = 6, width = 6)
+
+fit_EGR1_SOX10 = survfit(Surv(time, status) ~group,
+  data = EGR1_SOX10 %>% dplyr::filter(group != "Low"))
+EGR1_SOX10_plot <- ggsurvplot(fit_EGR1_SOX10,
+  pval = TRUE,
+  pval.coord = c(600, 0.5),
+  #xlim = c(0, 1000),
+  palette = c("#ffb464", "#126079"),
+  #conf.int = TRUE,
+  #pval = TRUE,
+  risk.table = TRUE,
+  risk.table.col = "strata",
+  legend.labs = c("High Expression", "Normal Expression"),
+  surv.median.line = "hv",
+  break.time.by = 250,
+    ggtheme = theme_prism(),
+    legend = c(0.7, 0.8),
+    title = "EGR1 and SOX10 expression Stratisfied Survival Plot")
 
 # EGR1 and CHRNA7
 EGR1_CHRNA7 <- merge(merged_EGR1, merged_CHRNA7, by = c("sample", "time", "status")) %>%
