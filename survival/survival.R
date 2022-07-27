@@ -32,7 +32,7 @@ EGR3 = fetch_dense_values(host = ge$XenaHosts,
   use_probeMap = TRUE) %>% .[1, ]
 SOX10 = fetch_dense_values(host = ge$XenaHosts,
   dataset = ge$XenaDatasets,
-  #identifiers = "SOX10",
+  identifiers = "SOX10",
   use_probeMap = TRUE) %>% .[1, ]
 RAMP3 = fetch_dense_values(host = ge$XenaHosts,
   dataset = ge$XenaDatasets,
@@ -243,11 +243,11 @@ fit
 
 merged_CHRNA7 = merged_CHRNA7 %>%
   mutate(group = case_when(
-    CHRNA7_expression > quantile(CHRNA7_expression, 0.9) ~'High',
+    CHRNA7_expression > quantile(CHRNA7_expression, 0.9) ~ 'High',
     (CHRNA7_expression < quantile(CHRNA7_expression, 0.9) &
-      CHRNA7_expression > quantile(CHRNA7_expression, 0.1)) ~'Normal',
-    CHRNA7_expression < quantile(CHRNA7_expression, 0.1) ~'Low',
-    TRUE~NA_character_
+      CHRNA7_expression > quantile(CHRNA7_expression, 0.1)) ~ 'Normal',
+    CHRNA7_expression < quantile(CHRNA7_expression, 0.1) ~ 'Low',
+    TRUE ~ NA_character_
   )) %>%
   mutate(z = (CHRNA7_expression - mean(CHRNA7_expression)) / sd(CHRNA7_expression)) %>%
   mutate(group = case_when(
