@@ -1,2 +1,0 @@
-exon,id,ENSEMBL_geneID,ENSEMBL_transcriptID,chr,exon_start,exon_end,strand,genestart,geneend,genebiotype,genename,rnaseqgeneid,Norm_nsamples,Norm_mean,Norm_sd,Tum_nsamples,Tum_mean,Tum_sd,wilcox_stat,pval,adj.pval
-chr7:45222756-45223847:+,ENST00000242249_exon_2_0_chr7_45222756_f,ENSG00000122679,ENST00000242249,chr7,45222755,45223849,+,45197390,45225901,protein_coding,RAMP3,RAMP3|10268,5,2.62759761501368,0.374186317359393,156,3.29375963461428,1.30603307885199,269,0.240281595360827,0.240281595360827

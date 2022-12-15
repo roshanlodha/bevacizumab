@@ -1,13 +1,13 @@
 library(tidyverse)
 library(ggprism)
-library(svglite)
 library(ggpubr)
 
 # EGR1
 egr1.poor.good <- read.csv("./egr1poorgood.csv")
+egr1.poor.good$fullname <- paste(egr1.poor.good$pdx_id, egr1.poor.good$animal_id)
 ggplot(egr1.poor.good, aes(x = fct_rev(bev_resp), y = h_score)) +
   geom_boxplot(alpha = 0.5, fill = c("#ffb464", "#126079")) +
-  geom_dotplot(aes(fill = factor(animal_id)),
+  geom_dotplot(aes(fill = factor(fullname)),
     binaxis = "y",
     stackdir = "center",
     dotsize = 0.5,
@@ -18,7 +18,7 @@ ggplot(egr1.poor.good, aes(x = fct_rev(bev_resp), y = h_score)) +
     legend.key.height = unit(10, "pt"),
     legend.title = element_text()) +
   guides(fill = guide_legend(title = "Animal ID")) +
-  stat_compare_means(label.x.npc = "left", label.y.npc = "bottom") +
+  #stat_compare_means(label.x.npc = "left", label.y.npc = "bottom") +
   ggtitle("EGR1 Expression (Nuclear)") +
   xlab("Bevacizumab Response Group") + ylab("Expression (H Score)")
 ggsave("../plots/ihc/egr1poorgood.png", height = 6, width = 6)
@@ -26,10 +26,11 @@ wilcox.test((egr1.poor.good %>% dplyr::filter(bev_resp == "good")) $h_score,
   (egr1.poor.good %>% dplyr::filter(bev_resp == "poor")) $h_score)
 
 egr1.poor.placebo <- read.csv("./egr1poorplacebo.csv")
+egr1.poor.placebo$fullname <- paste(egr1.poor.placebo$pdx_id, egr1.poor.placebo$animal_id)
 ggplot(egr1.poor.placebo %>% dplyr::filter(staining_type == "nuclear"),
     aes(x = treatment, y = h_score)) +
   geom_boxplot(alpha = 0.5, fill = c("#ffb464", "#126079")) +
-  geom_dotplot(aes(fill = factor(animal_id)),
+  geom_dotplot(aes(fill = factor(fullname)),
     binaxis = "y",
     stackdir = "center",
     dotsize = 0.5,
@@ -40,7 +41,6 @@ ggplot(egr1.poor.placebo %>% dplyr::filter(staining_type == "nuclear"),
     legend.key.height = unit(10, "pt"),
     legend.title = element_text()) +
   guides(fill = guide_legend(title = "Animal ID")) +
-  stat_compare_means(label.x.npc = "left", label.y.npc = "bottom") +
   ggtitle("EGR1 Nuclear Expression") +
   xlab("Treatment Group") + ylab("Expression (H Score)")
 ggsave("../plots/ihc/egr1poorplacebonuc.png", height = 6, width = 6)
@@ -48,7 +48,7 @@ ggsave("../plots/ihc/egr1poorplacebonuc.png", height = 6, width = 6)
 ggplot(egr1.poor.placebo %>% dplyr::filter(staining_type == "cytoplasmic"),
     aes(x = treatment, y = h_score)) +
   geom_boxplot(alpha = 0.5, fill = c("#ffb464", "#126079")) +
-  geom_dotplot(aes(fill = factor(animal_id)),
+  geom_dotplot(aes(fill = factor(fullname)),
     binaxis = "y",
     stackdir = "center",
     dotsize = 0.5,
@@ -59,7 +59,7 @@ ggplot(egr1.poor.placebo %>% dplyr::filter(staining_type == "cytoplasmic"),
     legend.key.height = unit(10, "pt"),
     legend.title = element_text()) +
   guides(fill = guide_legend(title = "Animal ID")) +
-  stat_compare_means(label.x.npc = "left", label.y.npc = "bottom") +
+  #stat_compare_means(label.x.npc = "left", label.y.npc = "bottom") +
   ggtitle("EGR1 Cytoplasmic Expression") +
   xlab("Treatment Group") + ylab("Expression (H Score)")
 ggsave("../plots/ihc/egr1poorplacebocyto.png", height = 6, width = 6)

@@ -101,7 +101,7 @@ ggsave(path = "./plots/", filename = "postfilterpca.png",
 coding_genes <- getBM(attributes = c("hgnc_symbol"),
   filters = c("biotype"),
   values = list(biotype = "protein_coding"),
-  mart = mart) $hgnc_symbol
+  mart = mart)$hgnc_symbol
 
 rownames(counts.matrix) <- counts$geneID
 dds <- DESeqDataSetFromMatrix(countData = round(counts.matrix),
@@ -266,10 +266,10 @@ write_csv(deseq.GSEA.df, "./tables/gsea_kegg.csv")
 kegg_gsea <- ggplot(deseq.GSEA.df, aes(x = NES, y = -log10(p.adjust), color = phenotype)) +
   geom_point(aes(size = setSize), alpha = 0.5) +
   scale_color_manual(values = c("good" = "#126079", "none" = "grey", "poor" = "#ffb464")) +
-  geom_text(aes(-1.5, -log10(0.05), label = "p = 0.05", vjust = -1)) +
+  geom_text(aes(-2, -log10(0.05), label = "p = 0.05", vjust = -1)) +
   geom_hline(yintercept = -log10(0.05), linetype = "longdash", size = .5) +
-  geom_text_repel(size = 4, data = (deseq.GSEA.df %>% dplyr::filter((NES > 0) & (p.adjust < 0.05)))[1, ],
-    aes(label = Description)) +
+  #geom_text_repel(size = 4, data = (deseq.GSEA.df %>% dplyr::filter((NES > 0) & (p.adjust < 0.05)))[1, ],
+  #  aes(label = Description)) +
   labs(title = "B. KEGG Gene Set Enrichment") +
   # subtitle = "Positive NES indicates upregulation of gene set in poor Bevacizumab responders") +
   ylab("Significance (log10)") +
