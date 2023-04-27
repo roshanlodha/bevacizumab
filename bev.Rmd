@@ -448,15 +448,14 @@ invisible(lapply(pkgs, function (x) suppressMessages(library(x, character.only =
 ```{r download-GBM-data}
 gbm_cohort = XenaData %>%
   filter(XenaHostNames == "tcgaHub") %>%
-  XenaScan("TCGA Glioblastoma") # microarray dataset, CNVA dataset DNA level
+  XenaScan("TCGA Glioblastoma")
 
-#download clinical data-- --
-cli_query = gbm_cohort %>%
+cli = gbm_cohort %>%
   filter(DataSubtype == "phenotype") %>% # select clinical dataset
   XenaGenerate() %>% # generate a XenaHub object
   XenaQuery() %>%
   XenaDownload()
-cli = XenaPrepare(cli_query)
+cli = XenaPrepare(cli)
 
 ge = gbm_cohort %>%
   filter(DataSubtype == "protein expression RPPA", Label == "RPPA (replicate-base normalization)")
@@ -487,8 +486,190 @@ CHRNA7 = fetch_dense_values(host = ge$XenaHosts,
   use_probeMap = TRUE) %>% .[1, ]
 ```
 
-## Survival stratified by SOX10 expression
-```{r SOX10-survival, include=FALSE}
+## EGR1 expression survival plot
+```{r EGR1-survival}
+merged_EGR1 = tibble(sample = names(EGR1),
+    EGR1_expression = as.numeric(EGR1)) %>%
+  left_join(cli$GBM_survival.txt, by = "sample") %>%
+  #filter(sample_type == "Primary Tumor") %>% # Keep only 'Primary Tumor'
+  select(sample, EGR1_expression, OS.time, OS) %>%
+  rename(time = OS.time,
+    status = OS)
+
+fit_EGR1 = coxph(Surv(time, status) ~EGR1_expression, data = merged_EGR1)
+fit_EGR1
+
+merged_EGR1 = merged_EGR1 %>%
+  mutate(group = case_when(
+    EGR1_expression > quantile(EGR1_expression, 0.9) ~'High',
+    (EGR1_expression < quantile(EGR1_expression, 0.9) &
+      EGR1_expression > quantile(EGR1_expression, 0.1)) ~'Normal',
+    EGR1_expression < quantile(EGR1_expression, 0.1) ~'Low',
+    TRUE~NA_character_
+  )) %>%
+  mutate(z = (EGR1_expression - mean(EGR1_expression)) / sd(EGR1_expression)) %>%
+  mutate(group = case_when(
+    z > 1.5~'High',
+    z < -1.5~'Low',
+    (z < 1.5) & (z > -1.5) ~'Normal',
+    TRUE~NA_character_
+  ))
+fit_EGR1 = survfit(Surv(time, status) ~group,
+  data = merged_EGR1 %>% dplyr::filter(group != "Low"))
+EGR1_plot <- ggsurvplot(fit_EGR1,
+  pval = TRUE,
+  pval.coord = c(600, 0.5),
+  #xlim = c(0, 1000),
+  palette = c("#ffb464", "#126079"),
+  #conf.int = TRUE,
+  #pval = TRUE,
+  risk.table = TRUE,
+  risk.table.col = "strata",
+  legend.labs = c("High Expression", "Normal Expression"),
+  surv.median.line = "hv",
+  break.time.by = 250,
+    ggtheme = theme_prism(),
+    legend = c(0.7, 0.8),
+    title = "EGR1-expression Stratisfied Survival Plot")
+##ggsave("../plots/survival/EGR1survival.svg", plot = print(EGR1_plot), height = 6, width = 6)
+```
+
+## Pan-Cancer EGR1 expression survival plot
+```{r pancan}
+egr1.pancan.altered <- read_table("./input/survival/pancanEGR1_alt.txt")
+egr1.pancan.altered$expression <- "altered"
+egr1.pancan.unaltered <- read_table("./input/survival/pancanEGR1_unalt.txt")
+egr1.pancan.unaltered$expression <- "unaltered"
+egr1.pancan <- rbind(egr1.pancan.unaltered, egr1.pancan.altered)
+egr1.pancan$Status = ifelse(egr1.pancan$Status == "censored", 1, 0)
+
+fit_EGR1_pancan = survfit(Surv(Months, Status) ~expression, data = egr1.pancan)
+EGR1_pancan_plot <- ggsurvplot(fit_EGR1_pancan,
+  #xlim = c(0, 1000),
+  palette = c("#ffb464", "#126079"),
+  #conf.int = TRUE,
+  #pval = TRUE,
+  risk.table = TRUE,
+  risk.table.col = "strata",
+  legend.labs = c("Altered Expression", "Normal Expression"),
+  ggtheme = theme_prism(),
+  legend = c(0.7, 0.8),
+  title = "EGR1-expression Stratisfied Survival Plot (Pan-Cancer Atlas)")
+EGR1_pancan_plot
+```
+
+## Lung Cancer 
+```{r egr1-lung-survival}
+lung_cohort = XenaData %>%
+  filter(XenaHostNames == "tcgaHub") %>%
+  XenaScan("TCGA Lung Cancer") 
+
+cli_lung = lung_cohort %>%
+  filter(DataSubtype == "phenotype") %>% # select clinical dataset
+  XenaGenerate() %>% # generate a XenaHub object
+  XenaQuery() %>%
+  XenaDownload()
+cli_lung = XenaPrepare(cli_lung)
+
+lung_ge = lung_cohort %>%
+  filter(DataSubtype == "gene expression RNAseq", Label == "IlluminaHiSeq")
+lung_EGR1 = fetch_dense_values(host = lung_ge$XenaHosts,
+  dataset = lung_ge$XenaDatasets,
+  identifiers = "EGR1",
+  use_probeMap = TRUE) %>% .[1, ]
+
+merged_lung_EGR1 = tibble(sample = names(lung_EGR1),
+    EGR1_expression = as.numeric(lung_EGR1)) %>%
+  left_join(cli_lung$LUNG_survival.txt, by = "sample") %>%
+  #filter(sample_type == "Primary Tumor") %>% # Keep only 'Primary Tumor'
+  select(sample, EGR1_expression, OS.time, OS) %>%
+  rename(time = OS.time,
+    status = OS) %>%
+  mutate(group = case_when(
+    EGR1_expression > quantile(EGR1_expression, 0.9) ~'High',
+    (EGR1_expression < quantile(EGR1_expression, 0.9) &
+      EGR1_expression > quantile(EGR1_expression, 0.1)) ~'Normal',
+    EGR1_expression < quantile(EGR1_expression, 0.1) ~'Low',
+    TRUE~NA_character_
+  )) %>%
+  mutate(z = (EGR1_expression - mean(EGR1_expression)) / sd(EGR1_expression)) %>%
+  mutate(group = case_when(
+    z > 1.5~'High',
+    z < -1.5~'Low',
+    (z < 1.5) & (z > -1.5) ~'Normal',
+    TRUE~NA_character_
+  ))
+
+fit_EGR1_lung = survfit(Surv(time, status) ~group,
+  data = merged_lung_EGR1 %>% dplyr::filter(group != "Low"))
+
+EGR1_lung_plot <- ggsurvplot(fit_EGR1_lung,
+  pval = TRUE,
+  pval.coord = c(600, 0.5),
+  #xlim = c(0, 1000),
+  palette = c("#ffb464", "#126079"),
+  #conf.int = TRUE,
+  #pval = TRUE,
+  risk.table = TRUE,
+  risk.table.col = "strata",
+  legend.labs = c("High Expression", "Normal Expression"),
+  surv.median.line = "hv",
+  break.time.by = 250,
+    ggtheme = theme_prism(),
+    legend = c(0.7, 0.8),
+    title = "EGR1-expression Stratisfied Survival Plot (nSCLC)")
+```
+
+## CHRNA7 expression survival plot
+```{r CHRNA7-survival}
+merged_CHRNA7 = tibble(sample = names(CHRNA7),
+    CHRNA7_expression = as.numeric(CHRNA7)) %>%
+  left_join(cli$GBM_survival.txt, by = "sample") %>%
+  #filter(sample_type == "Primary Tumor") %>% # Keep only 'Primary Tumor'
+select(sample, CHRNA7_expression, OS.time, OS) %>%
+  rename(time = OS.time,
+    status = OS)
+
+fit = coxph(Surv(time, status) ~CHRNA7_expression, data = merged_CHRNA7)
+fit
+
+merged_CHRNA7 = merged_CHRNA7 %>%
+  mutate(group = case_when(
+    CHRNA7_expression > quantile(CHRNA7_expression, 0.9) ~ 'High',
+    (CHRNA7_expression < quantile(CHRNA7_expression, 0.9) &
+      CHRNA7_expression > quantile(CHRNA7_expression, 0.1)) ~ 'Normal',
+    CHRNA7_expression < quantile(CHRNA7_expression, 0.1) ~ 'Low',
+    TRUE ~ NA_character_
+  )) %>%
+  mutate(z = (CHRNA7_expression - mean(CHRNA7_expression)) / sd(CHRNA7_expression)) %>%
+  mutate(group = case_when(
+    z > 1.5~'High',
+    z < -1.5~'Low',
+    (z < 1.5) & (z > -1.5) ~'Normal',
+    TRUE~NA_character_
+  ))
+
+fit_CHRNA7 = survfit(Surv(time, status) ~group,
+  data = merged_CHRNA7 %>% dplyr::filter(group != "Low"))
+CHRNA7_plot <- ggsurvplot(fit_CHRNA7,
+  pval = TRUE,
+  pval.coord = c(600, 0.5),
+  #xlim = c(0, 1000),
+  palette = c("#ffb464", "#126079"),
+  #conf.int = TRUE,
+  #pval = TRUE,
+  risk.table = TRUE,
+  risk.table.col = "strata",
+  legend.labs = c("High Expression", "Normal Expression"),
+  surv.median.line = "hv",
+  break.time.by = 250,
+    ggtheme = theme_prism(),
+    legend = c(0.7, 0.8),
+    title = "CHRNA7-expression Stratisfied Survival Plot")
+```
+
+## SOX10 expression survival plot
+```{r SOX10-survival}
 #SOX10-- --
 merged_SOX10 = tibble(sample = names(SOX10),
     SOX10_expression = as.numeric(SOX10)) %>%
@@ -537,8 +718,8 @@ SOX10_plot <- ggsurvplot(fit_SOX10,
 #SOX10_plot
 ```
 
-## Survival stratified by EGR3 expression
-```{r EGR3-survival, include=FALSE}
+## EGR3 expression survival plot
+```{r EGR3-survival}
 #EGR3-- --
 merged_EGR3 = tibble(sample = names(EGR3),
     EGR3_expression = as.numeric(EGR3)) %>%
@@ -586,57 +767,8 @@ EGR3_plot <- ggsurvplot(fit_EGR3,
 ##ggsave("../plots/survival/EGR3survival.png", plot = print(EGR3_plot), height = 6, width = 6)
 ```
 
-## Survival stratified by EGR1 expression
-```{r EGR1-survival}
-#merge-- --
-merged_EGR1 = tibble(sample = names(EGR1),
-    EGR1_expression = as.numeric(EGR1)) %>%
-  left_join(cli$GBM_survival.txt, by = "sample") %>%
-  #filter(sample_type == "Primary Tumor") %>% # Keep only 'Primary Tumor'
-  select(sample, EGR1_expression, OS.time, OS) %>%
-  rename(time = OS.time,
-    status = OS)
-
-fit_EGR1 = coxph(Surv(time, status) ~EGR1_expression, data = merged_EGR1)
-fit_EGR1
-
-merged_EGR1 = merged_EGR1 %>%
-  mutate(group = case_when(
-    EGR1_expression > quantile(EGR1_expression, 0.9) ~'High',
-    (EGR1_expression < quantile(EGR1_expression, 0.9) &
-      EGR1_expression > quantile(EGR1_expression, 0.1)) ~'Normal',
-    EGR1_expression < quantile(EGR1_expression, 0.1) ~'Low',
-    TRUE~NA_character_
-  )) %>%
-  mutate(z = (EGR1_expression - mean(EGR1_expression)) / sd(EGR1_expression)) %>%
-  mutate(group = case_when(
-    z > 1.5~'High',
-    z < -1.5~'Low',
-    (z < 1.5) & (z > -1.5) ~'Normal',
-    TRUE~NA_character_
-  ))
-fit_EGR1 = survfit(Surv(time, status) ~group,
-  data = merged_EGR1 %>% dplyr::filter(group != "Low"))
-EGR1_plot <- ggsurvplot(fit_EGR1,
-  pval = TRUE,
-  pval.coord = c(600, 0.5),
-  #xlim = c(0, 1000),
-  palette = c("#ffb464", "#126079"),
-  #conf.int = TRUE,
-  #pval = TRUE,
-  risk.table = TRUE,
-  risk.table.col = "strata",
-  legend.labs = c("High Expression", "Normal Expression"),
-  surv.median.line = "hv",
-  break.time.by = 250,
-    ggtheme = theme_prism(),
-    legend = c(0.7, 0.8),
-    title = "EGR1-expression Stratisfied Survival Plot")
-##ggsave("../plots/survival/EGR1survival.svg", plot = print(EGR1_plot), height = 6, width = 6)
-```
-
-## Survival stratified by RAMP3 expression
-```{r RAMP3-survival, include=FALSE}
+## RAMP3 expression survival plot
+```{r RAMP3-survival}
 merged_RAMP3 = tibble(sample = names(RAMP3),
     RAMP3_expression = as.numeric(RAMP3)) %>%
   left_join(cli$GBM_survival.txt, by = "sample") %>%
@@ -682,56 +814,22 @@ RAMP3_plot <- ggsurvplot(fit_RAMP3,
     title = "RAMP3-expression Stratisfied Survival Plot")
 ```
 
-## Survival stratified by CHRNA7 expression
-```{r CHRNA7-survival, include=FALSE}
-merged_CHRNA7 = tibble(sample = names(CHRNA7),
-    CHRNA7_expression = as.numeric(CHRNA7)) %>%
-  left_join(cli$GBM_survival.txt, by = "sample") %>%
-  #filter(sample_type == "Primary Tumor") %>% # Keep only 'Primary Tumor'
-select(sample, CHRNA7_expression, OS.time, OS) %>%
-  rename(time = OS.time,
-    status = OS)
+## Supplemental Figure 4
+```{r supplemental-figure-4, fig.height=6.5, fig.width=10}
+arrange_ggsurvplots
+splots <- list()
+splots[[1]] <- CHRNA7_plot
+splots[[2]] <- RAMP3_plot
+splots[[3]] <- SOX10_plot
+splots[[4]] <- EGR3_plot
 
-fit = coxph(Surv(time, status) ~CHRNA7_expression, data = merged_CHRNA7)
-fit
-
-merged_CHRNA7 = merged_CHRNA7 %>%
-  mutate(group = case_when(
-    CHRNA7_expression > quantile(CHRNA7_expression, 0.9) ~ 'High',
-    (CHRNA7_expression < quantile(CHRNA7_expression, 0.9) &
-      CHRNA7_expression > quantile(CHRNA7_expression, 0.1)) ~ 'Normal',
-    CHRNA7_expression < quantile(CHRNA7_expression, 0.1) ~ 'Low',
-    TRUE ~ NA_character_
-  )) %>%
-  mutate(z = (CHRNA7_expression - mean(CHRNA7_expression)) / sd(CHRNA7_expression)) %>%
-  mutate(group = case_when(
-    z > 1.5~'High',
-    z < -1.5~'Low',
-    (z < 1.5) & (z > -1.5) ~'Normal',
-    TRUE~NA_character_
-  ))
-
-fit_CHRNA7 = survfit(Surv(time, status) ~group,
-  data = merged_CHRNA7 %>% dplyr::filter(group != "Low"))
-CHRNA7_plot <- ggsurvplot(fit_CHRNA7,
-  pval = TRUE,
-  pval.coord = c(600, 0.5),
-  #xlim = c(0, 1000),
-  palette = c("#ffb464", "#126079"),
-  #conf.int = TRUE,
-  #pval = TRUE,
-  risk.table = TRUE,
-  risk.table.col = "strata",
-  legend.labs = c("High Expression", "Normal Expression"),
-  surv.median.line = "hv",
-  break.time.by = 250,
-    ggtheme = theme_prism(),
-    legend = c(0.7, 0.8),
-    title = "CHRNA7-expression Stratisfied Survival Plot")
+sf4 <- arrange_ggsurvplots(splots, print = FALSE, ncol = 2, nrow = 2, risk.table.height = 0.2)
+sf4
 ```
 
-## Survival stratified by EGR1 and SOX10 expression
-```{r EGR1-SOX10-survival, include=FALSE}
+## Dual-stratified expression survival curve
+### EGR1 and SOX10 expression survival plot
+```{r EGR1-SOX10-survival}
 # EGR1 and SOX10
 EGR1_SOX10 <- merge(merged_EGR1, merged_SOX10, by = c("sample", "time", "status")) %>%
   select("sample", "time", "status", "z.x", "z.y") %>%
@@ -768,8 +866,8 @@ EGR1_SOX10_plot <- ggsurvplot(fit_EGR1_SOX10,
     title = "EGR1 and SOX10 expression Stratisfied Survival Plot")
 ```
 
-## Survival stratified by EGR1 and CHRNA7 expression
-```{r EGR1-CHRNA7-survival, include=FALSE}
+### EGR1 and CHRNA7 expression survival plot
+```{r EGR1-CHRNA7-survival}
 EGR1_CHRNA7 <- merge(merged_EGR1, merged_CHRNA7, by = c("sample", "time", "status")) %>%
   select("sample", "time", "status", "z.x", "z.y") %>%
   mutate(group = case_when(
@@ -805,8 +903,8 @@ EGR1_CHRNA7_plot <- ggsurvplot(fit_EGR1_CHRNA7,
     title = "EGR1 and CHRNA7 expression Stratisfied Survival Plot")
 ```
 
-## Survival stratified by EGR1 and RAMP3 expression
-```{r EGR1-RAMP3-survival, include=FALSE}
+### EGR1 and RAMP3 expression survival plot
+```{r EGR1-RAMP3-survival}
 # EGR1 and RAMP3
 EGR1_RAMP3 <- merge(merged_EGR1, merged_RAMP3, by = c("sample", "time", "status")) %>%
   select("sample", "time", "status", "z.x", "z.y") %>%
@@ -819,9 +917,9 @@ EGR1_RAMP3 <- merge(merged_EGR1, merged_RAMP3, by = c("sample", "time", "status"
 EGR1_RAMP3_corr <- ggplot(data = EGR1_RAMP3, aes(x = z.x, y = z.y)) +
   geom_point() +
   theme_prism() +
-  labs(title = "EGR1 and CHRNA7 expression correlation") +
+  labs(title = "EGR1 and RAMP3 expression correlation") +
   xlab("EGR1 expression") +
-  ylab("CHRNA7 expression") +
+  ylab("RAMP3 expression") +
   geom_smooth(method = "lm")
 #ggsave("../plots/survival/EGR1.RAMP3.corr.svg", plot = EGR1_RAMP3_corr, height = 6, width = 6)
 
@@ -844,9 +942,20 @@ EGR1_RAMP3_plot <- ggsurvplot(fit_EGR1_RAMP3,
     title = "EGR1 and RAMP3 expression Stratisfied Survival Plot")
 ```
 
+### Supplemental Figure 3
+```{r supplemental-figure-3, fig.height=5, fig.width=10}
+sf3 <- ggarrange(EGR1_CHRNA7_corr, EGR1_RAMP3_corr, nrow = 1, ncol = 2)
+sf3
+```
+
 # Figure 3
 ```{r figure-3}
 EGR1_plot
+```
+
+# Utilities
+```{r query, include = FALSE}
+deseq
 ```
 
 ```{r, include=FALSE}
