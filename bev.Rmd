@@ -4,9 +4,9 @@ author: "Roshan Lodha"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   pdf_document: default
-  html_document:
-    df_print: paged
-    keep_md: true
+  #html_document:
+  #  df_print: paged
+  #  keep_md: true
   github_document:
     toc: true
     toc_depth: 2
@@ -88,7 +88,10 @@ pca.plot <- ggplot(pca.res.df) +
   theme_prism() +
   theme(legend.position = c(0.9, 0.5))
 ##ggsave(path = "./plots/", filename = "prefilterpca.png", plot = pca.plot, height = 5, width = 7)
+```
 
+## Supplemental Figure 1
+```{r supplemental-figure-1}
 sf1 <- ggarrange(pca.plot, den, ncol = 2, nrow = 1)
 sf1
 #ggexport(sf1, filename = "./plots/supplementalfigure1.png", width = 1000, height = 500)
@@ -339,7 +342,7 @@ f1
 ```{r eg1-poor-vs-good-ihc}
 egr1.poor.good <- read.csv("./input/ihc/egr1poorgood.csv")
 egr1.poor.good$fullname <- paste(egr1.poor.good$pdx_id, egr1.poor.good$animal_id)
-ggplot(egr1.poor.good, aes(x = fct_rev(bev_resp), y = h_score)) +
+egr1.ihc.plot <- ggplot(egr1.poor.good, aes(x = fct_rev(bev_resp), y = h_score)) +
   geom_boxplot(alpha = 0.5, fill = c("#ffb464", "#126079")) +
   geom_dotplot(aes(fill = factor(fullname)),
     binaxis = "y",
@@ -397,12 +400,15 @@ poor.placebo.cyt <- ggplot(egr1.poor.placebo %>% dplyr::filter(staining_type == 
   #stat_compare_means(label.x.npc = "left", label.y.npc = "bottom") +
   ggtitle("EGR1 Cytoplasmic Expression") +
   xlab("Treatment Group") + ylab("Expression (H Score)")
+```
 
+## Supplemental Figure 2
+```{r supplemental-figure-2}
 sf2 <- ggarrange(poor.placebo.nuc, poor.placebo.cyt, nrow = 1, ncol = 2)
 sf2
 ```
 
-```{r chi-sq-test}
+```{r chi-sq-test, include=FALSE}
 # Chi-squared
 rawihc <- read_csv("./input/ihc/ihcraw.csv")
 ihc <- rawihc %>%
@@ -423,6 +429,11 @@ ihc <- rawihc %>%
   group_by(bev_resp) %>%
   summarise_at(vars(neg, wk, plus_one), list(mean = mean))
 chisq.test(c(0.103, 0.704, 0.187), c(0.0229, 0.38, 0.55))
+```
+
+# Figure 2
+```{r figure-2}
+egr1.ihc.plot
 ```
 
 # Survival Analysis
@@ -477,7 +488,7 @@ CHRNA7 = fetch_dense_values(host = ge$XenaHosts,
 ```
 
 ## Survival stratified by SOX10 expression
-```{r SOX10-survival}
+```{r SOX10-survival, include=FALSE}
 #SOX10-- --
 merged_SOX10 = tibble(sample = names(SOX10),
     SOX10_expression = as.numeric(SOX10)) %>%
@@ -523,11 +534,11 @@ SOX10_plot <- ggsurvplot(fit_SOX10,
     legend = c(0.7, 0.8),
     title = "SOX10-expression Stratisfied Survival Plot")
 ##ggsave("../plots/survival/SOX10survival.png", plot = print(SOX10_plot), height = 6, width = 6)
-SOX10_plot
+#SOX10_plot
 ```
 
 ## Survival stratified by EGR3 expression
-```{r EGR3-survival}
+```{r EGR3-survival, include=FALSE}
 #EGR3-- --
 merged_EGR3 = tibble(sample = names(EGR3),
     EGR3_expression = as.numeric(EGR3)) %>%
@@ -622,11 +633,10 @@ EGR1_plot <- ggsurvplot(fit_EGR1,
     legend = c(0.7, 0.8),
     title = "EGR1-expression Stratisfied Survival Plot")
 ##ggsave("../plots/survival/EGR1survival.svg", plot = print(EGR1_plot), height = 6, width = 6)
-EGR1_plot
 ```
 
 ## Survival stratified by RAMP3 expression
-```{r RAMP3-survival}
+```{r RAMP3-survival, include=FALSE}
 merged_RAMP3 = tibble(sample = names(RAMP3),
     RAMP3_expression = as.numeric(RAMP3)) %>%
   left_join(cli$GBM_survival.txt, by = "sample") %>%
@@ -673,7 +683,7 @@ RAMP3_plot <- ggsurvplot(fit_RAMP3,
 ```
 
 ## Survival stratified by CHRNA7 expression
-```{r CHRNA7-survival}
+```{r CHRNA7-survival, include=FALSE}
 merged_CHRNA7 = tibble(sample = names(CHRNA7),
     CHRNA7_expression = as.numeric(CHRNA7)) %>%
   left_join(cli$GBM_survival.txt, by = "sample") %>%
@@ -721,7 +731,7 @@ CHRNA7_plot <- ggsurvplot(fit_CHRNA7,
 ```
 
 ## Survival stratified by EGR1 and SOX10 expression
-```{r EGR1-SOX10-survival}
+```{r EGR1-SOX10-survival, include=FALSE}
 # EGR1 and SOX10
 EGR1_SOX10 <- merge(merged_EGR1, merged_SOX10, by = c("sample", "time", "status")) %>%
   select("sample", "time", "status", "z.x", "z.y") %>%
@@ -759,7 +769,7 @@ EGR1_SOX10_plot <- ggsurvplot(fit_EGR1_SOX10,
 ```
 
 ## Survival stratified by EGR1 and CHRNA7 expression
-```{r EGR1-CHRNA7-survival}
+```{r EGR1-CHRNA7-survival, include=FALSE}
 EGR1_CHRNA7 <- merge(merged_EGR1, merged_CHRNA7, by = c("sample", "time", "status")) %>%
   select("sample", "time", "status", "z.x", "z.y") %>%
   mutate(group = case_when(
@@ -796,7 +806,7 @@ EGR1_CHRNA7_plot <- ggsurvplot(fit_EGR1_CHRNA7,
 ```
 
 ## Survival stratified by EGR1 and RAMP3 expression
-```{r EGR1-RAMP3-survival}
+```{r EGR1-RAMP3-survival, include=FALSE}
 # EGR1 and RAMP3
 EGR1_RAMP3 <- merge(merged_EGR1, merged_RAMP3, by = c("sample", "time", "status")) %>%
   select("sample", "time", "status", "z.x", "z.y") %>%
@@ -832,6 +842,11 @@ EGR1_RAMP3_plot <- ggsurvplot(fit_EGR1_RAMP3,
     ggtheme = theme_prism(),
     legend = c(0.7, 0.8),
     title = "EGR1 and RAMP3 expression Stratisfied Survival Plot")
+```
+
+# Figure 3
+```{r figure-3}
+EGR1_plot
 ```
 
 ```{r, include=FALSE}
