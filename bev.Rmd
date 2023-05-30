@@ -225,9 +225,11 @@ collagen$log.expr <- log(collagen$expression + 1)
 collagen$sample <- substr(collagen$sample,
   1,
   nchar(collagen$sample) - 5)
+#collagen <- collagen[order(collagen$log.expr), ]
 
 collagen_plot <- ggplot(data = collagen, mapping = aes(x = sample, y = gene, fill = log.expr)) +
   geom_tile() +
+  #scale_y_discrete(limits=(collagen$gene)[order(collagen$log.expr)]) +
   scale_fill_gradient(high = "#ffb464", low = "#126079") +
   scale_colour_prism(palette = "colors") +
   xlab(label = "Patient Derived Xenograft") + # Add a nicer x-axis title
@@ -241,6 +243,7 @@ collagen_plot <- ggplot(data = collagen, mapping = aes(x = sample, y = gene, fil
     legend.position = "bottom")
 ##ggsave(filename = "./plots/collagen.png", plot = collagen_plot, height = 6, width = 6)
 #collagen_plot
+collagen_plot
 ```
 
 ## Angiogenesis Gene Set Analysis
@@ -331,7 +334,7 @@ kegg_gsea <- ggplot(deseq.GSEA.df, aes(x = NES, y = -log10(p.adjust), color = ph
 ```
 
 # Figure 1
-```{r fig1}
+```{r fig1, fig.height=7, fig.width=10}
 f1 <- ggarrange(ggarrange(dgeplot, kegg_gsea, ncol = 1, nrow = 2), 
                 b_v_heatmap.plot, collagen_plot, ncol = 3, nrow = 1)
 f1
@@ -434,6 +437,98 @@ chisq.test(c(0.103, 0.704, 0.187), c(0.0229, 0.38, 0.55))
 # Figure 2
 ```{r figure-2}
 egr1.ihc.plot
+```
+
+# Protein Analysis
+```{r protein-expr}
+library(readxl)
+egr1_nuclear_expr <- read_excel("./input/expr.xlsx", sheet = "egr1_nuclear")
+nachra7_expr <- read_excel("./input/expr.xlsx", sheet = "nachra7")
+sox10_nuclear_expr <- read_excel("./input/expr.xlsx", sheet = "sox10_nuclear")
+```
+
+## EGR1 Nuclear Expression
+```{r egr1-nuclear-expression-plot}
+egr1.nuc.plot <- ggplot(egr1_nuclear_expr, aes(x = fct_rev(bev_resp), y = egr1_integrated_density)) +
+  geom_boxplot(alpha = 0.5, fill = c("#ffb464", "#126079")) +
+  geom_dotplot(aes(fill = factor(sample_id)),
+    binaxis = "y",
+    stackdir = "center",
+    dotsize = 0.5,
+    binpositions = "all",
+    stackgroups = TRUE) +
+  theme_prism() +
+  theme(
+    legend.key.height = unit(10, "pt"),
+    legend.title = element_text()) +
+  guides(fill = guide_legend(title = "Animal ID")) +
+  #stat_compare_means(label.x.npc = "left", label.y.npc = "bottom") +
+  ggtitle("A. EGR1 Expression (Nuclear)") +
+  xlab("Bevacizumab Response Group") + ylab("Nuclear Fluorescence Intensity (Integrated Density)")
+```
+
+## a7-nAChR Intensity
+```{r a7-nAChR-expression-plot}
+a7.nAChR.plot <- ggplot(nachra7_expr, aes(x = fct_rev(bev_resp), y = nachra7_integrated_density)) +
+  geom_boxplot(alpha = 0.5, fill = c("#ffb464", "#126079")) +
+  geom_dotplot(aes(fill = factor(sample_id)),
+    binaxis = "y",
+    stackdir = "center",
+    dotsize = 0.5,
+    binpositions = "all",
+    stackgroups = TRUE) +
+  theme_prism() +
+  theme(
+    legend.key.height = unit(10, "pt"),
+    legend.title = element_text()) +
+  guides(fill = guide_legend(title = "Animal ID")) +
+  #stat_compare_means(label.x.npc = "left", label.y.npc = "bottom") +
+  ggtitle("B. α7-nAChR Expression") +
+  xlab("Bevacizumab Response Group") + ylab("Fluorescence Intensity (Integrated Density)")
+```
+
+## SOX10 Nuclear Expression
+```{r sox10-nuclear-expression-plot}
+sox10.nuc.plot <- ggplot(sox10_nuclear_expr, aes(x = fct_rev(bev_resp), y = sox10_integrated_density_v2)) +
+  geom_boxplot(alpha = 0.5, fill = c("#ffb464", "#126079")) +
+  geom_dotplot(aes(fill = factor(sample_id)),
+    binaxis = "y",
+    stackdir = "center",
+    dotsize = 0.5,
+    binpositions = "all",
+    stackgroups = TRUE) +
+  theme_prism() +
+  theme(
+    legend.key.height = unit(10, "pt"),
+    legend.title = element_text()) +
+  guides(fill = guide_legend(title = "Animal ID")) +
+  #stat_compare_means(label.x.npc = "left", label.y.npc = "bottom") +
+  ggtitle("C. SOX10 Expression (Nuclear)") +
+  xlab("Bevacizumab Response Group") + ylab("Nuclear Fluorescence Intensity (Integrated Density)")
+```
+## Correlation between a7-nAChR and EGR1
+```{r a7-nAChR-egr1-corr}
+nachra7_expr$field <- rep(c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), 10)
+combined_expr_table <- merge(x = egr1_nuclear_expr, y = nachra7_expr, by = c("sample_id", "field")) %>%
+  select(c("sample_id", "field", "trt.x", "egr1_integrated_density", "nachra7_integrated_density")) %>%
+  group_by(sample_id) %>% 
+  summarise_at(vars(-trt.x, -field), funs(mean(., na.rm=TRUE)))
+
+egr1.chrna7.corr.plot <- ggplot(combined_expr_table, aes(x = egr1_integrated_density, y = nachra7_integrated_density)) +
+  geom_point(aes(color = factor(sample_id))) +
+  theme_prism() +
+  theme(
+    legend.key.height = unit(10, "pt"),
+    legend.title = element_text()) +
+  guides(color = guide_legend(title = "Animal ID")) +
+  #stat_compare_means(label.x.npc = "left", label.y.npc = "bottom") +
+  ggtitle("D. EGR1 Expression vs α7-nAChR Expression") +
+  xlab("EGR1 Expression (Integrated Density)") + ylab("α7-nAChR Expression (Integrated Density)")
+egr1.chrna7.corr.plot
+```
+
+# Figure 3
+```
 ```
 
 # Survival Analysis
@@ -948,8 +1043,8 @@ sf3 <- ggarrange(EGR1_CHRNA7_corr, EGR1_RAMP3_corr, nrow = 1, ncol = 2)
 sf3
 ```
 
-# Figure 3
-```{r figure-3}
+# Figure 5
+```{r figure-5}
 EGR1_plot
 ```
 
@@ -958,6 +1053,6 @@ EGR1_plot
 deseq
 ```
 
-```{r, include=FALSE}
+```{r}
 file.rename(from="bev.md",  to="README.md")
 ```
