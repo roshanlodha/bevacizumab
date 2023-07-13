@@ -1,0 +1,210 @@
+# Clinical RNA-seq Analysis
+```{r load-tcga-libraries}
+library("TCGAbiolinks")
+library("limma")
+library("edgeR")
+library("glmnet")
+library("factoextra")
+library("FactoMineR")
+library("caret")
+library("SummarizedExperiment")
+library("gplots")
+library("survival")
+library("survminer")
+library("RColorBrewer")
+library("gProfileR")
+library("genefilter")
+```
+
+```{r tcga-gbm-analysis}
+query_TCGA = GDCquery(
+  project = "TCGA-GBM",
+  data.category = "Transcriptome Profiling", # parameter enforced by GDCquery
+  data.type = "Gene Expression Quantification", 
+  experimental.strategy = "RNA-Seq",
+  workflow.type = "STAR - Counts",
+  sample.type = c("Recurrent Tumor", "Solid Tissue Normal"))
+  #sample.type = c("Recurrent Tumor", "Solid Tissue Normal"))
+# summary(factor(getResults(query_TCGA)$sample_type))
+```
+
+```{r temp}
+GDCdownload(query = query_TCGA)
+tcga_data = GDCprepare(query_TCGA)
+```
+
+```{r temp-2}
+lihc_res = getResults(query_TCGA) # make results as table
+# head(lihc_res) # data of the first 6 patients.
+lihc_res$sample_type
+```
+
+```{r limma-pipeline}
+limma_pipeline = function(
+  tcga_data,
+  condition_variable,
+  reference_group=NULL){
+
+  design_factor = colData(tcga_data)[, condition_variable, drop=T]
+
+  group = factor(design_factor)
+  if(!is.null(reference_group)){group = relevel(group, ref=reference_group)}
+
+  design = model.matrix(~ group)
+
+  dge = DGEList(counts=assay(tcga_data),
+                 samples=colData(tcga_data),
+                 genes=as.data.frame(rowData(tcga_data)))
+
+  # filtering
+  keep = filterByExpr(dge,design)
+  dge = dge[keep,,keep.lib.sizes=FALSE]
+  rm(keep)
+
+  # Normalization (TMM followed by voom)
+  dge = calcNormFactors(dge)
+  v = voom(dge, design, plot=TRUE)
+
+  # Fit model to data given design
+  fit = lmFit(v, design)
+  fit = eBayes(fit)
+
+  # Show top genes
+  topGenes = topTable(fit, coef=ncol(design), number=Inf, sort.by="p")
+
+  return(
+    list(
+      voomObj=v, # normalized data
+      fit=fit, # fitted model and statistics
+      topGenes=topGenes # the 100 most differentially expressed genes
+    )
+  )
+}
+
+limma_res = limma_pipeline(
+  tcga_data=tcga_data,
+  condition_variable="definition", # use standard
+  #reference_group="Primary Tumor" # primary vs solid tissue 
+)
+```
+
+```{r DGE}
+DGE_list <- limma_res$topGenes
+DGE_list <- DGE_list %>% 
+  dplyr::filter(gene_type == "protein_coding") %>% 
+  dplyr::select(-c("gene_type")) %>%
+  dplyr::select(c("gene_name", "logFC", "AveExpr", "t", "P.Value", "adj.P.Val", "B", "level"))
+DGE_list
+```
+
+```{r bv-col-tcga}
+collagen_genes <- c("COL1A1", "COL1A2", "COL2A1", "COL3A1", "COL4A1", "COL4A2", "COL4A3", "COL4A4", "COL4A5", "COL4A6", "COL5A1", "COL5A2", "COL5A3", "COL6A1", "COL6A2", "COL6A3", "COL6A4P1", "COL6A4P2", "COL6A5", "COL6A6", "COL7A1", "COL8A1", "COL8A2", "COL9A1", "COL9A2", "COL9A3", "COL10A1", "COL11A1", "COL11A2", "COL12A1", "COL13A1", "COL14A1", "COL15A1", "COL16A1", "COL17A1", "COL18A1", "COL19A1", "COL20A1", "COL21A1", "COL22A1", "COL23A1", "COL24A1", "COL25A1", "COL26A1", "COL27A1", "COL28A1")
+collagen_tcga <- DGE_list %>% 
+  dplyr::filter((gene_name %in% collagen_genes)) %>%
+  dplyr::filter(adj.P.Val < 0.05) %>%
+  dplyr::filter(abs(logFC) > 2)
+collagen_tcga
+
+blood_vessel <- scan("../input/blood_vessel_geneset.txt", character(), quote = "")
+blood_vessel <- DGE_list %>% 
+  dplyr::filter((gene_name %in% blood_vessel | gene_name == "SOX10")) %>%
+  dplyr::filter(adj.P.Val < 0.05) %>%
+  dplyr::filter(abs(logFC) > 2)
+blood_vessel
+```
+
+```{r load-limma-data}
+limma_res = readRDS(file = "limma_res.RDS")
+```
+
+```{r limma-PCA}
+plot_PCA = function(voomObj, condition_variable){
+  group = factor(voomObj$targets[, condition_variable])
+  pca = prcomp(t(voomObj$E))
+  # Take PC1 and PC2 for the plot
+  plot(pca$x[,1:2],col=group, pch=19)
+  # include a legend for points
+  legend("bottomleft", inset=.01, levels(group), pch=19, col=1:length(levels(group)))
+  return(pca)
+}
+
+res_pca = plot_PCA(limma_res$voomObj, "definition")
+```
+
+```{r clinical-features}
+colnames(colData(tcga_data))
+```
+
+# Survival Analysis
+```{r load-survival-packages-and-data}
+library("TCGAbiolinks")
+library("limma")
+library("edgeR")
+library("glmnet")
+library("factoextra")
+library("FactoMineR")
+library("caret")
+library("SummarizedExperiment")
+library("gplots")
+library("survival")
+library("survminer")
+library("RColorBrewer")
+library("gProfileR")
+library("genefilter")
+```
+
+```{r temp}
+as.data.frame(tcga_data@colData)
+```
+
+```{r surv-plot}
+clinical = tcga_data@colData
+clin_df = clinical[clinical$definition == "Recurrent Solid Tumor", 
+                   c("patient", "vital_status", "days_to_death", "days_to_last_follow_up", "days_to_death", "gender", "prior_treatment")]
+
+clin_df$deceased = clin_df$vital_status == "Dead"
+clin_df$overall_survival = ifelse(clin_df$deceased,
+                                   clin_df$days_to_death,
+                                   clin_df$days_to_last_follow_up)
+
+fit = survfit(Surv(overall_survival, deceased) ~ prior_treatment, data=clin_df)
+
+ggsurvplot(fit, data=clin_df)
+```
+
+```{r surv-by-gene}
+d_mat = as.matrix(t(limma_res$voomObj$E))
+expr_df = limma_res$topGenes
+
+gene_id = "ENSG00000120738.8"
+gene_name = "EGR1"
+
+expr_diseased = d_mat[rownames(clin_df), gene_id]
+expr_healthy = d_mat[setdiff(rownames(d_mat), rownames(clin_df)), gene_id]
+
+boxplot(expr_diseased, expr_healthy,
+        names=c("Diseased", "Healthy"), main="Distribution of gene expression")
+```
+
+```{r regulation-based-survival}
+clin_df$gene_value = d_mat[rownames(clin_df), gene_id]
+
+# find the median value of the gene and print it
+median_value = median(clin_df$gene_value)
+
+clin_df$gene = ifelse(clin_df$gene_value >= median_value, "UP", "DOWN")
+
+# we can fit a survival model, like we did in the previous section
+fit = survfit(Surv(overall_survival, deceased) ~ gene, data=clin_df)
+
+ggsurvplot(fit, data=clin_df, 
+           #xlim = c(0, 1000),
+           palette = c("#126079", "#ffb464"),
+           #conf.int = TRUE,
+           #pval = TRUE,
+           legend.labs = c("Low Expression", "High Expression"),
+           break.time.by = 250,
+           ggtheme = theme_prism(),
+           legend = c(0.7, 0.8),
+           title = "EGR1-stratified Survival (Recurrent Tumors)")
+```
