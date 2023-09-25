@@ -149,7 +149,7 @@ We choose not to perform UMAP due to limited sample size and use of PDX tumors.
 ## Processing counts data
 
 ```{r deseq}
-mart = useEnsembl(biomart='ensembl', dataset = "hsapiens_gene_ensembl", mirror = "useast")
+mart = useEnsembl(biomart='ensembl', dataset = "hsapiens_gene_ensembl", mirror = "uswest")
 #mart <- useMart("ENSEMBL_MART_ENSEMBL") #coding genes for cleaning
 #mart <- useDataset("hsapiens_gene_ensembl", mart)
 
