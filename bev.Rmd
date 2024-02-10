@@ -4,7 +4,7 @@ author: "Roshan Lodha"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   github_document:
-    toc: true
+    toc: false
     toc_depth: 4
   #html_document:
   #  df_print: paged
@@ -167,7 +167,7 @@ deseq$enrichment[is.na(deseq$enrichment)] <- "none"
 rownames(deseq) <- deseq$gene
 ```
 
-```{r dge-plot}
+```{r dge-plot, fig.show='hide'}
 fig1a <- ggplot(deseq) +
   aes(y = -log10(padj), x = log2FoldChange, colour = enrichment) +
   scale_color_manual(values = c("good" = "#126079", "none" = "grey", "poor" = "#ffb464")) +
@@ -214,7 +214,7 @@ deseq.GSEA.df$phenotype[is.na(deseq.GSEA.df$phenotype)] <- "none"
 deseq.GSEA.df$Description <- gsub("_", " ", deseq.GSEA.df$Description)
 ```
 
-```{r hgsea-plot}
+```{r hgsea-plot, fig.show='hide'}
 fig1b <- ggplot(deseq.GSEA.df, aes(x = NES, y = -log10(p.adjust), color = phenotype)) +
   geom_point(aes(size = setSize), alpha = 0.5) +
   scale_color_manual(values = c("good" = "#126079", "none" = "grey", "poor" = "#ffb464")) +
@@ -254,7 +254,7 @@ ggarrange(suppfig3a, suppfig3b, ncol = 1, nrow = 2, heights = c(1, .3))
 
 ### Angiogenesis Gene Expression Plot
 
-```{r angiogenesis-heatmap}
+```{r angiogenesis-heatmap, fig.show='hide'}
 blood_vessel <- scan("./input/blood_vessel_geneset.txt", character(), quote = "")
 blood_vessel <- deseq %>% filter((gene %in% blood_vessel) &
   (enrichment != "none") &
@@ -292,7 +292,7 @@ fig1c
 
 ### Collagen Gene Expression Plot
 
-```{r collagen-heatmap}
+```{r collagen-heatmap, fig.show='hide'}
 collagen_genes_master <- c("COL1A1", "COL1A2", "COL2A1", "COL3A1", "COL4A1", "COL4A2", "COL4A3", "COL4A4", "COL4A5", "COL4A6", "COL5A1", "COL5A2", "COL5A3", "COL6A1", "COL6A2", "COL6A3", "COL6A4P1", "COL6A4P2", "COL6A5", "COL6A6", "COL7A1", "COL8A1", "COL8A2", "COL9A1", "COL9A2", "COL9A3", "COL10A1", "COL11A1", "COL11A2", "COL12A1", "COL13A1", "COL14A1", "COL15A1", "COL16A1", "COL17A1", "COL18A1", "COL19A1", "COL20A1", "COL21A1", "COL22A1", "COL23A1", "COL24A1", "COL25A1", "COL26A1", "COL27A1", "COL28A1")
 
 collagen_genes <- deseq %>% filter(gene %in% collagen_genes_master) %>% filter(enrichment != "none")
@@ -343,7 +343,7 @@ fig1
 # Protein Level Analysis
 
 ## EGR1 Expression
-```{r egr1-ihc-plot}
+```{r egr1-ihc-plot, fig.show='hide'}
 egr1.poor.good <- read.csv("./input/ihc/egr1poorgood.csv") %>%
   mutate(bev_resp = recode(bev_resp, good = 'Good Response', poor = 'Poor Response'))
 
@@ -409,7 +409,7 @@ poor.placebo.cyt <- ggplot(egr1.poor.placebo %>% dplyr::filter(staining_type == 
 exfig1 <- ggarrange(poor.placebo.nuc, poor.placebo.cyt, nrow = 1, ncol = 2)
 ```
 
-```{r egr1-nuclear-expr-plot}
+```{r egr1-nuclear-expr-plot, fig.show='hide'}
 egr1_nuclear_expr <- read_excel("./input/expr.xlsx", sheet = "egr1_nuclear") %>%
   mutate(bev_resp = recode(bev_resp, good_resp = 'Good Response', poor_resp = 'Poor Response'))
 
@@ -466,7 +466,7 @@ a7.nAChR.plot <- ggplot(nachra7_expr, aes(x = fct_rev(bev_resp), y = nachra7_int
 ```{r sox10-nuclear-expr}
 sox10_nuclear_expr <- read_excel("./input/expr.xlsx", sheet = "sox10_nuclear") %>%
   mutate(bev_resp = recode(bev_resp, good_resp = 'Good Response', poor_resp = 'Poor Response'))
-suppfig8a <- ggplot(sox10_nuclear_expr, aes(x = fct_rev(bev_resp), y = sox10_integrated_density_v2)) +
+suppfig4a <- ggplot(sox10_nuclear_expr, aes(x = fct_rev(bev_resp), y = sox10_integrated_density_v2)) +
   geom_boxplot(alpha = 0.5, fill = c("#126079", "#ffb464")) +
   geom_dotplot(aes(fill = factor(sample_id)),
     binaxis = "y",
@@ -481,7 +481,7 @@ suppfig8a <- ggplot(sox10_nuclear_expr, aes(x = fct_rev(bev_resp), y = sox10_int
   rremove("xlab") +
   ylab("Nuclear Fluorescence Intensity")
 
-suppfig8b <- ggplot(sox10_nuclear_expr, aes(x = fct_rev(bev_resp), y = number_of_sox10_cells)) +
+suppfig4b <- ggplot(sox10_nuclear_expr, aes(x = fct_rev(bev_resp), y = number_of_sox10_cells)) +
   geom_boxplot(alpha = 0.5, fill = c("#126079", "#ffb464")) +
   geom_dotplot(aes(fill = factor(sample_id)),
     binaxis = "y",
@@ -497,14 +497,14 @@ suppfig8b <- ggplot(sox10_nuclear_expr, aes(x = fct_rev(bev_resp), y = number_of
   ylab("Number of SOX10+ Cells")
 ```
 
-```{r suppfig8, fig.height=6, fig.width=8}
-suppfig8 <- ggarrange(suppfig8a, suppfig8b, nrow = 1, ncol = 2)
-suppfig8
+```{r suppfig4, fig.height=6, fig.width=8}
+suppfig4 <- ggarrange(suppfig4a, suppfig4b, nrow = 1, ncol = 2)
+suppfig4
 ```
 
 ## Correlation between a7-nAChR and EGR1
 
-```{r a7-nAChR-egr1-corr}
+```{r a7-nAChR-egr1-corr, fig.show='hide'}
 nachra7_expr$field <- rep(c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), 10)
 combined_expr_table <- merge(x = egr1_nuclear_expr, y = nachra7_expr, by = c("sample_id", "field")) %>%
   select(c("sample_id", "field", "trt.x", "egr1_mean_intensity", "nachra7_mean_intensity")) #%>%
@@ -584,7 +584,7 @@ CHRNA7 = fetch_dense_values(host = ge$XenaHosts,
 ### TCGA RNA Analysis
 #### EGR1-Stratified Angiogenesis Expression
 
-```{r tcga-egr1-angiogensis-rna-plot}
+```{r tcga-egr1-angiogensis-rna-plot, fig.show='hide'}
 EGR1_angiogensis = fetch_dense_values(host = ge$XenaHosts,
   dataset = ge$XenaDatasets,
   identifiers = c("EGR1", goi),
@@ -621,7 +621,7 @@ fig5a
 
 #### EGR1-Stratified Collagen Expression
 
-```{r tcga-egr1-collagen-rna-plot}
+```{r tcga-egr1-collagen-rna-plot, fig.show='hide'}
 EGR_collagen = fetch_dense_values(host = ge$XenaHosts,
   dataset = ge$XenaDatasets,
   identifiers = c("EGR1", collagen_genes),
@@ -657,7 +657,7 @@ fig5b
 
 #### EGR1-Stratified Average Expression Boxplot
 
-```{r tcga-angiogenesis-collagen-egr1-box-plot}
+```{r tcga-angiogenesis-collagen-egr1-box-plot, fig.show='hide'}
 blood_vessel <- scan("./input/blood_vessel_geneset.txt", character(), quote = "")
 EGR1_collagen_angiogenesis = fetch_dense_values(host = ge$XenaHosts,
   dataset = ge$XenaDatasets,
@@ -702,7 +702,7 @@ fig5c
 
 #### EGR1-Stratified Survival Plot
 
-```{r EGR1-survival, fig.width=10, fig.height=7}
+```{r EGR1-survival, fig.width=10, fig.height=7, fig.show='hide'}
 merged_EGR1 = tibble(sample = names(EGR1),
     EGR1_expression = as.numeric(EGR1)) %>%
   left_join(cli$GBM_survival.txt, by = "sample") %>%
@@ -852,7 +852,7 @@ fit = survfit(Surv(overall_survival, deceased) ~ gene, data=clin_df)
 ```
 
 ```{r suppfig6}
-suppfig6 <- ggsurvplot(fit, data=clin_df, 
+suppfig7 <- ggsurvplot(fit, data=clin_df, 
                        palette = c("#126079", "#ffb464"),
                        pval = TRUE,
                        risk.table = TRUE,
@@ -861,7 +861,7 @@ suppfig6 <- ggsurvplot(fit, data=clin_df,
                        break.time.by = 250,
                        ggtheme = theme_prism(),
                        legend = c(0.7, 0.8))
-suppfig6
+suppfig7
 ```
 
 ### Figure 5
@@ -992,7 +992,7 @@ merged_CHRNA7 = merged_CHRNA7 %>%
 
 fit_CHRNA7 = survfit(Surv(time, status) ~group,
   data = merged_CHRNA7 %>% dplyr::filter(group != "Low"))
-suppfig7a <- ggsurvplot(fit_CHRNA7,
+suppfig8a <- ggsurvplot(fit_CHRNA7,
   pval = TRUE,
   pval.coord = c(600, 0.5),
   #xlim = c(0, 1000),
@@ -1038,7 +1038,7 @@ merged_SOX10 = merged_SOX10 %>%
   ))
 fit_SOX10 = survfit(Surv(time, status) ~group,
   data = merged_SOX10 %>% dplyr::filter(group != "Low"))
-suppfig7b <- ggsurvplot(fit_SOX10,
+suppfig8b <- ggsurvplot(fit_SOX10,
   pval = TRUE,
   pval.coord = c(600, 0.5),
   #xlim = c(0, 1000),
@@ -1087,7 +1087,7 @@ merged_EGR3 = merged_EGR3 %>%
   ))
 fit_EGR3 = survfit(Surv(time, status) ~group,
   data = merged_EGR3 %>% dplyr::filter(group != "Low"))
-suppfig7c <- ggsurvplot(fit_EGR3,
+suppfig8c <- ggsurvplot(fit_EGR3,
   pval = TRUE,
   pval.coord = c(600, 0.5),
   #xlim = c(0, 1000),
@@ -1134,7 +1134,7 @@ merged_RAMP3 = merged_RAMP3 %>%
   ))
 fit_RAMP3 = survfit(Surv(time, status) ~group,
   data = merged_RAMP3 %>% dplyr::filter(group != "Low"))
-suppfig7d <- ggsurvplot(fit_RAMP3,
+suppfig8d <- ggsurvplot(fit_RAMP3,
   pval = TRUE,
   pval.coord = c(600, 0.5),
   #xlim = c(0, 1000),
@@ -1152,11 +1152,11 @@ suppfig7d <- ggsurvplot(fit_RAMP3,
 
 ### Other Genes Plot
 
-```{r suppfig7, fig.height=10, fig.width=7}
+```{r suppfig8, fig.height=10, fig.width=7}
 splots <- list()
-splots[[1]] <- suppfig7a
-splots[[2]] <- suppfig7b
+splots[[1]] <- suppfig8a
+splots[[2]] <- suppfig8b
 
-suppfig7 <- arrange_ggsurvplots(splots, print = FALSE, ncol = 1, nrow = 2, risk.table.height = 0.35)
-suppfig7
+suppfig8 <- arrange_ggsurvplots(splots, print = FALSE, ncol = 1, nrow = 2, risk.table.height = 0.35)
+suppfig8
 ```
