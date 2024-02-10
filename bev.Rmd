@@ -5,17 +5,18 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   github_document:
     toc: true
-    toc_depth: 2
+    toc_depth: 4
   #html_document:
   #  df_print: paged
   #  keep_md: true
-  pdf_document: default
+  #pdf_document: default
 keyword: "bevacizumab"
 ---
 
-```{r setup}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(warning = FALSE, # turn off warnings
                       message = FALSE,
+                      echo = FALSE,
                       results = 'hide') # hide console output
 knitr::opts_chunk$set(fig.width = 10, fig.height = 7) # set figure height and width
 ```
@@ -217,31 +218,32 @@ deseq.GSEA.df$Description <- gsub("_", " ", deseq.GSEA.df$Description)
 fig1b <- ggplot(deseq.GSEA.df, aes(x = NES, y = -log10(p.adjust), color = phenotype)) +
   geom_point(aes(size = setSize), alpha = 0.5) +
   scale_color_manual(values = c("good" = "#126079", "none" = "grey", "poor" = "#ffb464")) +
-  geom_text(aes(-2, -log10(0.05), label = "p = 0.05", vjust = -1)) +
-  geom_hline(yintercept = -log10(0.05), linetype = "longdash", size = .5) +
+  geom_text(aes(-2, -log10(0.05), color="black", label = "p = 0.05", vjust = -1)) +
+  geom_hline(yintercept = -log10(0.05), linetype = "longdash", size = .5, color="black") +
   ylab("Significance (log10)") +
   xlab("Normalized Enrichment Score") +
   theme_prism() +
-  theme(legend.position = "bottom")
+  theme(legend.position = c(0.8, 0.7),
+        legend.title = element_text())
 fig1b
 ```
 
 ```{r suppfig3}
-suppfig3a <- ggplot(deseq.GSEA.df %>% dplyr::filter(phenotype == "poor")) +
+suppfig3a <- ggplot(deseq.GSEA.df %>% dplyr::filter(phenotype == "good")) +
   geom_col(aes(x = reorder(Description, -NES), y = NES, fill = NES)) +
   coord_flip() + 
   scale_fill_gradient2(low = "red", mid = "blue", high = "blue", midpoint = 0) +
-  labs(title = "Upregulated in Poor Responders") +
+  labs(title = "Downregulated in Poor Responders") +
   xlab("Hallmark Pathways") + 
   ylab("Normalized Enrichment Score (NES)") + 
   guides(fill = FALSE) +
   theme_prism(base_fontface = "plain")
 
-suppfig3b <- ggplot(deseq.GSEA.df %>% dplyr::filter(phenotype == "good")) +
+suppfig3b <- ggplot(deseq.GSEA.df %>% dplyr::filter(phenotype == "poor")) +
   geom_col(aes(x = reorder(Description, -NES), y = NES, fill = NES)) +
   coord_flip() + 
   scale_fill_gradient2(low = "red", mid = "blue", high = "blue", midpoint = 0) +
-  labs(title = "Downregulated in Poor Responders") +
+  labs(title = "Upregulated in Poor Responders") +
   xlab("Hallmark Pathways") + 
   ylab("Normalized Enrichment Score (NES)") + 
   guides(fill = FALSE) +
@@ -277,13 +279,15 @@ fig1c <- ggplot(data = b_v_heatmap, mapping = aes(x = sample, y = gene, fill = l
   geom_tile() +
   scale_fill_gradient(high = "#ffb464", low = "#126079") +
   scale_colour_prism(palette = "colors") +
-  xlab(label = "Patient Derived Xenograft") + # Add a nicer x - axis title
+  #xlab(label = "Patient Derived Xenograft") + # Add a nicer x - axis title
+  rremove("xlab") +
   facet_grid(~group,
     switch = "x", scales = "free_x", space = "free_x") +
   theme_prism() +
   theme(axis.title.y = element_blank(),
     axis.text.x = element_text(angle = 60, vjust = 0.7),
-    legend.position = "bottom")
+    legend.position = "none")
+fig1c
 ```
 
 ### Collagen Gene Expression Plot
@@ -317,21 +321,23 @@ fig1d <- ggplot(data = collagen, mapping = aes(x = sample, y = gene, fill = log.
   geom_tile() +
   scale_fill_gradient(high = "#ffb464", low = "#126079") +
   scale_colour_prism(palette = "colors") +
-  xlab(label = "Patient Derived Xenograft") +
+  #xlab(label = "Patient Derived Xenograft") +
+  rremove("xlab") +
   facet_grid(~group,
     switch = "x", scales = "free_x", space = "free_x") +
   theme_prism() +
   theme(axis.title.y = element_blank(),
     axis.text.x = element_text(angle = 60, vjust = 0.7),
     legend.position = "bottom")
+fig1d
 ```
 
 ### Figure 1
 
 ```{r fig1, fig.height=10, fig.width=15}
-f1 <- ggarrange(ggarrange(fig1a, fig1b, ncol = 1, nrow = 2), 
+fig1 <- ggarrange(ggarrange(fig1a, NULL, fig1b, ncol = 1, nrow = 3, heights = c(1, 0.1, 1)), 
                 fig1c, fig1d, ncol = 3, nrow = 1)
-f1
+fig1
 ```
 
 # Protein Level Analysis
@@ -359,6 +365,7 @@ fig2a <- ggplot(egr1.poor.good, aes(x = fct_rev(bev_resp), y = h_score)) +
   #guides(fill = guide_legend(nrow = 5))
   rremove("xlab") +
   ylab("Expression (H Score)")
+fig2a
 ```
 
 ```{r eg1-poor-vs-placebo-ihc}
@@ -424,9 +431,11 @@ fig2c <- ggplot(egr1_nuclear_expr, aes(x = fct_rev(bev_resp), y = egr1_integrate
   rremove("xlab") +
   ylab("Nuclear Fluorescence Intensity") + 
   guides(fill = guide_legend(nrow = 5))
+fig2c
 ```
 
 ### Figure 2
+
 ```{r fig2, fig.width=16, fig.height=6}
 f2 <- ggarrange(fig2a, NULL,  fig2c, NULL, nrow = 1, widths = c(1, 2, 1, 1))
 f2
@@ -434,6 +443,7 @@ f2
 
 ## Non-EGR1 Expression
 ### a7-nAChR Intensity
+
 ```{r a7-nAChR-expression-plot}
 nachra7_expr <- read_excel("./input/expr.xlsx", sheet = "nachra7")
 a7.nAChR.plot <- ggplot(nachra7_expr, aes(x = fct_rev(bev_resp), y = nachra7_integrated_density)) +
@@ -452,6 +462,7 @@ a7.nAChR.plot <- ggplot(nachra7_expr, aes(x = fct_rev(bev_resp), y = nachra7_int
 ```
 
 ### SOX10 Expression
+
 ```{r sox10-nuclear-expr}
 sox10_nuclear_expr <- read_excel("./input/expr.xlsx", sheet = "sox10_nuclear") %>%
   mutate(bev_resp = recode(bev_resp, good_resp = 'Good Response', poor_resp = 'Poor Response'))
@@ -505,9 +516,10 @@ fig3b <- ggplot(combined_expr_table, aes(x = egr1_mean_intensity, y = nachra7_me
   theme_prism() +
   theme(legend.position = "right") +
   guides(color = guide_legend(title = "Animal ID")) +
-  xlab("EGR1 Intensity") + ylab("α7-nAChR Intensity") +
+  xlab("EGR1 Intensity") + ylab("a7-nAChR Intensity") +
   stat_cor() + 
   geom_smooth(method=lm, se=FALSE, colour="black")
+fig3b
 ```
 
 ```{r resid-plot}
@@ -516,13 +528,13 @@ resid.plot <- ggplot(egr1.nachr7.expr.corr, aes(x = .fitted, y = .resid)) +
   geom_point() +
   geom_hline(yintercept = 0) +
   theme_prism() +
-  ggtitle("e. Linear Model Residuals of EGR1 vs α7-nAChR") +
+  ggtitle("e. Linear Model Residuals of EGR1 vs a7-nAChR") +
   xlab("Residuals") + ylab("Filtered")
 ```
 
 ### Figure 3
 ```{r fig3, fig.width=7, fig.height=10}
-f3 <- ggarrange(NULL, fig3b, ncol = 1, nrow = 2)
+f3 <- ggarrange(NULL, NULL, fig3b, ncol = 1, nrow = 3, heights = c(1, 0.1, 1))
 f3
 ```
 
@@ -571,6 +583,7 @@ CHRNA7 = fetch_dense_values(host = ge$XenaHosts,
 
 ### TCGA RNA Analysis
 #### EGR1-Stratified Angiogenesis Expression
+
 ```{r tcga-egr1-angiogensis-rna-plot}
 EGR1_angiogensis = fetch_dense_values(host = ge$XenaHosts,
   dataset = ge$XenaDatasets,
@@ -603,9 +616,11 @@ fig5a <- ggplot(data = EGR1_angiogensis_pivoted %>%
         axis.text.x = element_blank(), 
         axis.ticks.x = element_blank(),
         legend.position = "bottom")
+fig5a
 ```
 
 #### EGR1-Stratified Collagen Expression
+
 ```{r tcga-egr1-collagen-rna-plot}
 EGR_collagen = fetch_dense_values(host = ge$XenaHosts,
   dataset = ge$XenaDatasets,
@@ -637,9 +652,11 @@ fig5b <- ggplot(data = EGR_collagen_pivoted %>%
         axis.text.x = element_blank(), 
         axis.ticks.x = element_blank(),
         legend.position = "bottom")
+fig5b
 ```
 
 #### EGR1-Stratified Average Expression Boxplot
+
 ```{r tcga-angiogenesis-collagen-egr1-box-plot}
 blood_vessel <- scan("./input/blood_vessel_geneset.txt", character(), quote = "")
 EGR1_collagen_angiogenesis = fetch_dense_values(host = ge$XenaHosts,
@@ -662,7 +679,7 @@ EGR1_collagen_angiogenesis_pivoted <- pivot_longer(data = EGR1_collagen_angiogen
                                                    cols = -c(EGR1, rowname),
                                                    names_to = "Gene", 
                                                    values_to = "Expression") %>%
-  dplyr::mutate(group = ifelse(Gene %in% goi, "angiogenesis", "collagen"))
+  dplyr::mutate(group = ifelse(Gene %in% goi, "Angiogenesis Genes", "Collagen Genes"))
 
 my_comparisons <- list(c("Front", "Rear"),
                        c("Front", "4WD"),
@@ -676,13 +693,16 @@ fig5c <- ggplot(EGR1_collagen_angiogenesis_pivoted %>%
   scale_fill_manual(values = c("#126079", "#ffb464")) + 
   theme_prism() +
   ylab("Log Expression") +
-  xlab("Gene Set") +
-  theme(legend.position = "right")
+  rremove("xlab") +
+  theme(legend.position = "right") +
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 10))
+
+fig5c
 ```
 
 #### EGR1-Stratified Survival Plot
 
-```{r EGR1-survival, fig.width=10, fig.height=6}
+```{r EGR1-survival, fig.width=10, fig.height=7}
 merged_EGR1 = tibble(sample = names(EGR1),
     EGR1_expression = as.numeric(EGR1)) %>%
   left_join(cli$GBM_survival.txt, by = "sample") %>%
@@ -715,15 +735,19 @@ fit_EGR1 = survfit(Surv(time, status) ~group,
 fig5d <- ggsurvplot(fit_EGR1,
   pval = TRUE,
   pval.coord = c(600, 0.5),
+  risk.table = TRUE,
+  risk.table.height = 0.3,
   xlim = c(0, 1000),
   palette = c("#ffb464", "#126079", "grey"),
   legend.labs = c("High Expression", "Low Expression", "Normal Expression"),
   break.time.by = 250,
     ggtheme = theme_prism(),
     legend = c(0.8, 0.8))
+fig5d
 ```
 
 ##### EGR1-Stratified Recurrent Tumor Survival Plot
+
 ```{r EGR1-recurrent-survival}
 library("TCGAbiolinks")
 library("limma")
@@ -804,15 +828,12 @@ expr_df = limma_res$topGenes
 gene_id = "ENSG00000120738.8"
 gene_name = "EGR1"
 
-expr_diseased = d_mat[rownames(clin_df), gene_id]
-expr_healthy = d_mat[setdiff(rownames(d_mat), rownames(clin_df)), gene_id]
-
-boxplot(expr_diseased, expr_healthy,
-        names=c("Diseased", "Healthy"), main="Distribution of gene expression")
-
 clinical = tcga_data@colData
 clin_df = clinical[clinical$definition == "Recurrent Solid Tumor", 
                    c("patient", "vital_status", "days_to_death", "days_to_last_follow_up", "days_to_death", "gender", "prior_treatment")]
+
+expr_diseased = d_mat[rownames(clin_df), gene_id]
+expr_healthy = d_mat[setdiff(rownames(d_mat), rownames(clin_df)), gene_id]
 
 clin_df$deceased = clin_df$vital_status == "Dead"
 clin_df$overall_survival = ifelse(clin_df$deceased,
@@ -839,8 +860,7 @@ suppfig6 <- ggsurvplot(fit, data=clin_df,
                        legend.labs = c("Low Expression", "High Expression"),
                        break.time.by = 250,
                        ggtheme = theme_prism(),
-                       legend = c(0.7, 0.8),
-                       title = "EGR1-stratified Survival (Recurrent Tumors)")
+                       legend = c(0.7, 0.8))
 suppfig6
 ```
 
@@ -848,14 +868,16 @@ suppfig6
 
 ```{r fig5, fig.height=10, fig.width=15}
 f5 <- ggarrange(ggarrange(fig5a, fig5b, ncol = 2, nrow = 1, common.legend = TRUE, legend = "none"), 
-                ggarrange(fig5c, fig5d, ncol = 2, nrow = 1, widths = c(1, 0.5)),
-                ncol = 1, nrow = 2, heights = c(0.6, 1))
+                NULL,
+                ggarrange(fig5c, fig5d$plot, ncol = 2, nrow = 1, widths = c(0.5, 1)),
+                ncol = 1, nrow = 3, heights = c(0.6, 0.1, 1))
 f5
 ```
 
 ## Other Cancers
 ### Pan-Cancer Analysis
-```{r pancan, fig.height=10, fig.width=10}
+
+```{r pancan, eval=FALSE, fig.height=10, fig.width=10}
 egr1.pancan.altered <- read_table("./input/survival/pancanEGR1_alt.txt")
 egr1.pancan.altered$expression <- "altered"
 egr1.pancan.unaltered <- read_table("./input/survival/pancanEGR1_unalt.txt")
@@ -879,7 +901,7 @@ EGR1_pancan_plot <- ggsurvplot(fit_EGR1_pancan,
 
 ### Lung Cancer Analysis
 
-```{r egr1-lung-survival}
+```{r egr1-lung-survival, eval=FALSE}
 lung_cohort = XenaData %>%
   filter(XenaHostNames == "tcgaHub") %>%
   XenaScan("TCGA Lung Cancer") 
@@ -942,6 +964,7 @@ EGR1_lung_plot <- ggsurvplot(fit_EGR1_lung,
 
 ## Other Genes
 ### CHRNA7 Survival Plot
+
 ```{r CHRNA7-survival}
 merged_CHRNA7 = tibble(sample = names(CHRNA7),
     CHRNA7_expression = as.numeric(CHRNA7)) %>%
@@ -950,9 +973,6 @@ merged_CHRNA7 = tibble(sample = names(CHRNA7),
 select(sample, CHRNA7_expression, OS.time, OS) %>%
   rename(time = OS.time,
     status = OS)
-
-fit = coxph(Surv(time, status) ~CHRNA7_expression, data = merged_CHRNA7)
-fit
 
 merged_CHRNA7 = merged_CHRNA7 %>%
   mutate(group = case_when(
@@ -986,7 +1006,7 @@ suppfig7a <- ggsurvplot(fit_CHRNA7,
   break.time.by = 250,
     ggtheme = theme_prism(),
     legend = c(0.7, 0.8),
-    title = "CHRNA7-expression Stratisfied Survival Plot")
+    title = "CHRNA7-Stratisfied Survival Plot")
 ```
 
 ### SOX10 Survival Plot
@@ -1000,9 +1020,6 @@ merged_SOX10 = tibble(sample = names(SOX10),
   rename(time = OS.time,
     status = OS)
 #ggplot(merged_SOX10, aes(x = SOX10_expression)) + geom_histogram(color="black", fill="white") + theme_prism()
-
-fit_SOX10 = coxph(Surv(time, status) ~ SOX10_expression, data = merged_SOX10)
-fit_SOX10
 
 merged_SOX10 = merged_SOX10 %>%
   mutate(group = case_when(
@@ -1035,12 +1052,12 @@ suppfig7b <- ggsurvplot(fit_SOX10,
   break.time.by = 250,
     ggtheme = theme_prism(),
     legend = c(0.7, 0.8),
-    title = "SOX10-expression Stratisfied Survival Plot")
+    title = "SOX10-Stratisfied Survival Plot")
 ```
 
 ### EGR3 Survival Plot
 
-```{r EGR3-survival}
+```{r EGR3-survival, eval=FALSE}
 #EGR3-- --
 merged_EGR3 = tibble(sample = names(EGR3),
     EGR3_expression = as.numeric(EGR3)) %>%
@@ -1083,13 +1100,12 @@ suppfig7c <- ggsurvplot(fit_EGR3,
   surv.median.line = "hv",
   break.time.by = 250,
     ggtheme = theme_prism(),
-    legend = c(0.7, 0.8),
-    title = "EGR3-expression Stratisfied Survival Plot")
+    legend = c(0.7, 0.8))
 ```
 
 ### RAMP3 Survival Plot
 
-```{r RAMP3-survival}
+```{r RAMP3-survival, eval=FALSE}
 merged_RAMP3 = tibble(sample = names(RAMP3),
     RAMP3_expression = as.numeric(RAMP3)) %>%
   left_join(cli$GBM_survival.txt, by = "sample") %>%
@@ -1131,17 +1147,16 @@ suppfig7d <- ggsurvplot(fit_RAMP3,
   surv.median.line = "hv",
   break.time.by = 250,
     ggtheme = theme_prism(),
-    legend = c(0.7, 0.8),
-    title = "RAMP3-expression Stratisfied Survival Plot")
+    legend = c(0.7, 0.8))
 ```
 
 ### Other Genes Plot
 
-```{r suppfig7, fig.height=10, fig.width=6}
+```{r suppfig7, fig.height=10, fig.width=7}
 splots <- list()
 splots[[1]] <- suppfig7a
 splots[[2]] <- suppfig7b
 
-sf7 <- arrange_ggsurvplots(splots, print = FALSE, ncol = 1, nrow = 2, risk.table.height = 0.35)
-sf7
+suppfig7 <- arrange_ggsurvplots(splots, print = FALSE, ncol = 1, nrow = 2, risk.table.height = 0.35)
+suppfig7
 ```
