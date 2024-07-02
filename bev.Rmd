@@ -50,6 +50,13 @@ group <- factor(design$group)
 gbmexpr <- read_csv("input/prefiltergbmexpr.csv")[2: 13] #pre-filtered
 ```
 
+### Specific Expression Analysis
+```{r specific-sample-expr}
+gbmexpr.select <- gbmexpr %>% 
+  dplyr::filter(`Gene Symbol` == "PTEN")
+gbmexpr.select
+```
+
 ## Preprocessing 
 
 ```{r preprocessing}
@@ -130,11 +137,11 @@ pca.plot <- ggplot(pca.res.df) +
 
 ### DGE Plot
 ```{r suppfig2}
-mart = useEnsembl(biomart='ensembl', dataset = "hsapiens_gene_ensembl", mirror = "useast")
-#mart <- useMart(biomart = "ensembl", 
-         #host = "www.ensembl.org")
-#mart <- useMart("ENSEMBL_MART_ENSEMBL") #coding genes for cleaning
-#mart <- useDataset("hsapiens_gene_ensembl", mart)
+#mart = useEnsembl(biomart='ensembl', dataset = "hsapiens_gene_ensembl", mirror = "useast")
+mart <- useMart(biomart = "ensembl", 
+         host = "www.ensembl.org")
+mart <- useMart("ENSEMBL_MART_ENSEMBL") #coding genes for cleaning
+mart <- useDataset("hsapiens_gene_ensembl", mart)
 
 coding_genes <- getBM(attributes = c("hgnc_symbol"),
   filters = c("biotype"),
@@ -212,6 +219,9 @@ deseq.GSEA.df <- deseq.GSEA.df %>%
     (NES < 0) & (p.adjust < 0.05) ~"good"))
 deseq.GSEA.df$phenotype[is.na(deseq.GSEA.df$phenotype)] <- "none"
 deseq.GSEA.df$Description <- gsub("_", " ", deseq.GSEA.df$Description)
+head(deseq.GSEA.df, 25) %>%
+  dplyr::select(-c("ID", "enrichmentScore", "pvalue", "qvalue", "rank", "leading_edge")) %>%
+  gt()
 ```
 
 ```{r hgsea-plot, fig.show='hide'}
@@ -337,7 +347,9 @@ fig1d
 ```{r fig1, fig.height=10, fig.width=15}
 fig1 <- ggarrange(ggarrange(fig1a, NULL, fig1b, ncol = 1, nrow = 3, heights = c(1, 0.1, 1)), 
                 fig1c, fig1d, ncol = 3, nrow = 1)
+tiff("fig1.tiff", units="in", width=15, height=10, res=300)
 fig1
+dev.off()
 ```
 
 # Protein Level Analysis
@@ -364,7 +376,8 @@ fig2a <- ggplot(egr1.poor.good, aes(x = fct_rev(bev_resp), y = h_score)) +
   scale_x_discrete(labels = function(x) str_wrap(x, width = 10)) +
   #guides(fill = guide_legend(nrow = 5))
   rremove("xlab") +
-  ylab("Expression (H Score)")
+  ylab("Expression (H Score)") + 
+  stat_compare_means(label.x = 2, label.y = NULL, aes(label = paste0("p = ", after_stat(p.format))))
 fig2a
 ```
 
@@ -430,15 +443,18 @@ fig2c <- ggplot(egr1_nuclear_expr, aes(x = fct_rev(bev_resp), y = egr1_integrate
   #guides(fill = guide_legend(title = "Animal ID")) +
   rremove("xlab") +
   ylab("Nuclear Fluorescence Intensity") + 
-  guides(fill = guide_legend(nrow = 5))
+  guides(fill = guide_legend(nrow = 5)) + 
+  stat_compare_means(label.x = 2, label.y = NULL, aes(label = "p < 0.001"))
 fig2c
 ```
 
 ### Figure 2
 
-```{r fig2, fig.width=16, fig.height=6}
-f2 <- ggarrange(fig2a, NULL,  fig2c, NULL, nrow = 1, widths = c(1, 2, 1, 1))
-f2
+```{r fig2, fig.width=20, fig.height=6}
+fig2 <- ggarrange(fig2a, NULL,  fig2c, NULL, nrow = 1, widths = c(1, 2, 1, 1))
+tiff("fig2.tiff", units="in", width=15, height=10, res=300)
+fig2
+dev.off()
 ```
 
 ## Non-EGR1 Expression
@@ -689,7 +705,7 @@ fig5c <- ggplot(EGR1_collagen_angiogenesis_pivoted %>%
          dplyr::filter(EGR1 != "EGR1 normal"),
        aes(x = group, y = Expression, fill = EGR1)) +            # Applying ggplot function
   geom_boxplot(alpha = 0.5) +
-  stat_compare_means(aes(label = paste0("p = ", after_stat(p.format)))) +
+  #stat_compare_means(aes(label = paste0("p = ", after_stat(p.format)))) +
   scale_fill_manual(values = c("#126079", "#ffb464")) + 
   theme_prism() +
   ylab("Log Expression") +
@@ -851,7 +867,7 @@ clin_df$gene = ifelse(clin_df$gene_value >= median_value, "UP", "DOWN")
 fit = survfit(Surv(overall_survival, deceased) ~ gene, data=clin_df)
 ```
 
-```{r suppfig6}
+```{r suppfig7}
 suppfig7 <- ggsurvplot(fit, data=clin_df, 
                        palette = c("#126079", "#ffb464"),
                        pval = TRUE,
@@ -866,12 +882,18 @@ suppfig7
 
 ### Figure 5
 
-```{r fig5, fig.height=10, fig.width=15}
-f5 <- ggarrange(ggarrange(fig5a, fig5b, ncol = 2, nrow = 1, common.legend = TRUE, legend = "none"), 
+```{r fig5, fig.height=8, fig.width=12}
+fig5alt <- ggarrange(ggarrange(fig5a, fig5b, ncol = 2, nrow = 1, common.legend = TRUE, legend = "none"), 
                 NULL,
                 ggarrange(fig5c, fig5d$plot, ncol = 2, nrow = 1, widths = c(0.5, 1)),
                 ncol = 1, nrow = 3, heights = c(0.6, 0.1, 1))
-f5
+fig5 <- ggarrange(ggarrange(fig5d$plot, fig5c, ncol = 2, nrow = 1, widths = c(1, 0.5)), 
+                NULL,
+                ggarrange(fig5a, fig5b, ncol = 2, nrow = 1, common.legend = TRUE, legend = "none"),
+                ncol = 1, nrow = 3, heights = c(1, 0.1, 0.6))
+tiff("fig5.tiff", units="in", width=15, height=10, res=300)
+fig5
+dev.off()
 ```
 
 ## Other Cancers
