@@ -71,6 +71,7 @@ log2.tpm.filtered.norm.df <- as_tibble(log2.tpm.filtered.norm, rownames = "geneI
 ```{r preprocessing-figs, fig.height=4, fig.width=10}
 distance <- dist(t(log2.tpm.filtered.norm), method = "maximum")
 clusters <- hclust(distance, method = "average")
+
 suppfig1a <- ggdendrogram(clusters) +
   xlab("Distance") +
   ylab("Sample") +
@@ -98,6 +99,66 @@ suppfig1b <- ggplot(pca.res.df) +
 ```{r suppfig1}
 suppfig1 <- ggarrange(suppfig1a, suppfig1b, ncol = 2, nrow = 1)
 suppfig1
+```
+
+# Unsupervised Analysis
+
+```{r assign-based-on-pc}
+# Assign clusters based on PC1 value
+pca.res.df$cluster <- ifelse(pca.res.df$PC1 > 0, "Cluster 2", "Cluster 1")
+
+# Convert to a dataframe with sample labels
+cluster_df <- data.frame(sample = pca.res.df$sampleLabel, 
+                         cluster = factor(pca.res.df$cluster))
+
+# Visualize PCA with new clusters
+ggplot(pca.res.df, aes(x = PC1, y = PC2, color = cluster, label = sampleLabel)) +
+  geom_point(size = 3) +
+  geom_text_repel() +
+  scale_color_manual(values = c("Cluster 1" = "#126079", "Cluster 2" = "#ffb464")) +
+  ggtitle("Clusters Based on PC1") +
+  theme_prism()
+
+```
+
+```{r unsup-assign}
+design <- cbind(design, cluster_df %>% select(c("cluster")))
+sampleLabels <- design$sample
+group <- factor(design$group)
+mm <- model.matrix(~0 + cluster, data = design)
+``` 
+
+```{r unsup-dge}
+counts <- gbmexpr.matrix
+counts <- counts[rowSums(counts <= 0) <= 3, ] %>% drop_na() #filter: at most 3 zeros
+rownames(counts.matrix) <- counts$gene
+
+dds <- DESeqDataSetFromMatrix(countData = round(counts),
+                              colData = design,
+                              design = ~ cluster)
+
+keep <- rowSums(counts(dds)) >= 350  
+dds <- dds[keep, ]
+
+dds <- DESeq(dds)
+res <- results(dds, contrast = c("cluster", "Cluster 2", "Cluster 1"))
+res <- lfcShrink(dds, type = "ashr", contrast = c("cluster", "Cluster 2", "Cluster 1"))
+
+deseq_pc1 <- as.data.frame(res) %>%
+  drop_na() %>%
+  arrange(padj) %>%
+  arrange(desc(abs(log2FoldChange)))
+
+deseq_pc1$gene <- getSYMBOL(rownames(deseq_pc1), data = 'org.Hs.eg')
+deseq_pc1 <- dplyr::filter(deseq_pc1, gene %in% coding_genes)
+
+deseq_pc1 <- deseq_pc1 %>%
+  mutate(enrichment = case_when(
+    (padj < 0.05) & (log2FoldChange > 1) ~ "Cluster 2",
+    (padj < 0.05) & (log2FoldChange < -1) ~ "Cluster 1"
+  ))
+deseq_pc1$enrichment[is.na(deseq_pc1$enrichment)] <- "none"
+rownames(deseq_pc1) <- deseq_pc1$gene
 ```
 
 ## Postprocessing
@@ -350,6 +411,10 @@ fig1 <- ggarrange(ggarrange(fig1a, NULL, fig1b, ncol = 1, nrow = 3, heights = c(
 tiff("fig1.tiff", units="in", width=15, height=10, res=300)
 fig1
 dev.off()
+```
+
+# Unsupervised Clustering
+```{r unsupervised DGE}
 ```
 
 # Protein Level Analysis
